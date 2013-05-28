@@ -56,6 +56,7 @@ public class FindActivity extends Activity {
 
 				}
 				progress.dismiss();
+				
 				// if (nameList == null) {
 				// nameList = new ArrayList<String>();
 				// for (int i = 0; i < queryData.tagList.size(); i++) {
