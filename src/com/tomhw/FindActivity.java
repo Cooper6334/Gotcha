@@ -159,7 +159,15 @@ public class FindActivity extends Activity {
 						@Override
 						public void onClick(View v) {
 							// TODO Auto-generated method stub
-							MainActivity.testString = names[v.getId() - 100];
+//							MainActivity.testString = names[v.getId() - 100];
+//							finish();
+							
+							if(names[v.getId() - 100].equals("")){
+								return;
+							}
+							Intent i = new Intent(FindActivity.this, ShowTagActivity.class);
+							i.putExtra("tag", names[v.getId() - 100]);
+							startActivity(i);
 							finish();
 						}
 					});
@@ -252,7 +260,7 @@ public class FindActivity extends Activity {
 					String ss = GetDataFromURL
 							.getJsonResponseFromURL("http://conceptnet5.media.mit.edu/data/5.1/c/zh_TW/"
 									+ queryTag
-									+ "?get=incoming_edges+outgoing_edges&limit=500");
+									+ "?get=incoming_edges+outgoing_edges&limit=50");
 					JSONObject object = new JSONObject(ss);
 
 					JSONArray edges = object.getJSONArray("edges");

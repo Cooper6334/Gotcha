@@ -35,6 +35,7 @@ import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class ShowTagActivity extends Activity {
 	String findTag;
@@ -57,6 +58,8 @@ public class ShowTagActivity extends Activity {
 					@Override
 					public void onClick(View v) {
 						// TODO Auto-generated method stub
+						Toast.makeText(ShowTagActivity.this, "發音",
+								Toast.LENGTH_LONG).show();
 						new Thread(new Runnable() {
 
 							@Override
@@ -65,8 +68,9 @@ public class ShowTagActivity extends Activity {
 								URI uri;
 								try {
 									uri = new URI(
-											"http://translate.google.com/translate_tts?tl=zh-TW&q="
-													+ findTag);
+
+									"http://translate.google.com/translate_tts?tl=zh-TW&q="
+											+ findTag);
 									URL u = new URL(uri.toASCIIString());
 									HttpURLConnection c = (HttpURLConnection) u
 											.openConnection();
