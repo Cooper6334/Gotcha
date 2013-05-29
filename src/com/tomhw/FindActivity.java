@@ -56,8 +56,7 @@ public class FindActivity extends Activity {
 
 				}
 				progress.dismiss();
-				
-				
+
 				// if (nameList == null) {
 				// nameList = new ArrayList<String>();
 				// for (int i = 0; i < queryData.tagList.size(); i++) {
@@ -154,21 +153,36 @@ public class FindActivity extends Activity {
 			imageButtons[i].setId(100 + i);
 			imageButtons[i].setImageBitmap(null);
 			imageButtons[i]
+					.setOnLongClickListener(new ImageButton.OnLongClickListener() {
+
+						@Override
+						public boolean onLongClick(View v) {
+							// TODO Auto-generated method stub
+							if (names[v.getId() - 100] == null
+									|| names[v.getId() - 100].equals("")) {
+								return false;
+							}
+							Intent i = new Intent(FindActivity.this,
+									ShowTagActivity.class);
+							i.putExtra("tag", names[v.getId() - 100]);
+							startActivity(i);
+							finish();
+							return true;
+						}
+					});
+			imageButtons[i]
 					.setOnClickListener(new ImageButton.OnClickListener() {
 
 						@Override
 						public void onClick(View v) {
 							// TODO Auto-generated method stub
-//							MainActivity.testString = names[v.getId() - 100];
-//							finish();
-							
-							if(names[v.getId() - 100].equals("")){
+							if (names[v.getId() - 100] == null
+									|| names[v.getId() - 100].equals("")) {
 								return;
 							}
-							Intent i = new Intent(FindActivity.this, ShowTagActivity.class);
-							i.putExtra("tag", names[v.getId() - 100]);
-							startActivity(i);
+							MainActivity.testString = names[v.getId() - 100];
 							finish();
+
 						}
 					});
 
