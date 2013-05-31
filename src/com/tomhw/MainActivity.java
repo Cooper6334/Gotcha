@@ -21,8 +21,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import xBaseJ.DBF;
 import xBaseJ.Field;
@@ -51,6 +49,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.SurfaceHolder.Callback;
+import android.view.ViewGroup.LayoutParams;
 import android.view.inputmethod.CompletionInfo;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
@@ -58,6 +57,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.view.inputmethod.InputMethodSubtype;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 /**
@@ -78,12 +79,9 @@ public class MainActivity extends InputMethodService implements
 	static String testString = "";
 
 	// 鍵盤
-	private View handWriteView;
+	View[] keyBoardView = new View[4];
 	WriteView writeView;
-	private View drawView;
-	private View englishView;
-	private View chineseView;
-	private View symbolView;
+	TextView typingView;
 
 	// 選字
 	HandCandidateView handCandidateView;
@@ -231,8 +229,20 @@ public class MainActivity extends InputMethodService implements
 		// R.layout.input, null);
 		// mInputView.setOnKeyboardActionListener(this);
 		// mInputView.setKeyboard(mQwertyKeyboard);
-		handWriteView = (View) getLayoutInflater().inflate(R.layout.test, null);
-		((Button) handWriteView.findViewById(R.id.button1))
+		RelativeLayout layout = new RelativeLayout(this);
+		this.getWindow().addContentView(
+				layout,
+				new LayoutParams(LayoutParams.MATCH_PARENT,
+						LayoutParams.MATCH_PARENT));
+		typingView = new TextView(this);
+		typingView.setTextSize(36);
+		typingView.setBackgroundColor(Color.WHITE);
+		typingView.setVisibility(View.GONE);
+		layout.addView(typingView);
+
+		keyBoardView[0] = (View) getLayoutInflater().inflate(R.layout.test,
+				null);
+		((Button) keyBoardView[0].findViewById(R.id.button1))
 				.setOnClickListener(new Button.OnClickListener() {
 
 					@Override
@@ -247,15 +257,15 @@ public class MainActivity extends InputMethodService implements
 				});
 		writeView = new WriteView(this);
 		writeView.setId(123);
-		((LinearLayout) handWriteView.findViewById(R.id.linearlayout))
+		((LinearLayout) keyBoardView[0].findViewById(R.id.linearlayout))
 				.addView(writeView);
 
-		chineseView = (View) getLayoutInflater()
-				.inflate(R.layout.chinese, null);
+		keyBoardView[1] = (View) getLayoutInflater().inflate(R.layout.chinese,
+				null);
 		for (int i = 1; i <= 41; i++) {
 			int id = getResources().getIdentifier("chinese" + i, "id",
 					getPackageName());
-			Button btn = ((Button) chineseView.findViewById(id));
+			Button btn = ((Button) keyBoardView[1].findViewById(id));
 			btn.setTag(i);
 			btn.setOnClickListener(new Button.OnClickListener() {
 				@Override
@@ -266,8 +276,25 @@ public class MainActivity extends InputMethodService implements
 
 				}
 			});
+			btn.setOnTouchListener(new Button.OnTouchListener() {
+
+				@Override
+				public boolean onTouch(View v, MotionEvent event) {
+					switch (event.getAction()) {
+					case MotionEvent.ACTION_DOWN:
+					case MotionEvent.ACTION_MOVE:
+						showTypingWord(((Button) v).getText().toString(),
+								v.getX(), ((LinearLayout) v.getParent()).getY());
+						break;
+					case MotionEvent.ACTION_UP:
+						hideTypingWord(false);
+						break;
+					}
+					return false;
+				}
+			});
 		}
-		((Button) chineseView.findViewById(R.id.function2))
+		((Button) keyBoardView[1].findViewById(R.id.function2))
 				.setOnClickListener(new Button.OnClickListener() {
 					@Override
 					public void onClick(View v) {
@@ -276,7 +303,7 @@ public class MainActivity extends InputMethodService implements
 
 					}
 				});
-		((Button) chineseView.findViewById(R.id.function6))
+		((Button) keyBoardView[1].findViewById(R.id.function6))
 				.setOnClickListener(new Button.OnClickListener() {
 					@Override
 					public void onClick(View v) {
@@ -287,7 +314,7 @@ public class MainActivity extends InputMethodService implements
 						startActivity(i);
 					}
 				});
-		((Button) chineseView.findViewById(R.id.function7))
+		((Button) keyBoardView[1].findViewById(R.id.function7))
 				.setOnClickListener(new Button.OnClickListener() {
 					@Override
 					public void onClick(View v) {
@@ -300,13 +327,13 @@ public class MainActivity extends InputMethodService implements
 
 					}
 				});
-		englishView = (View) getLayoutInflater()
-				.inflate(R.layout.english, null);
+		keyBoardView[2] = (View) getLayoutInflater().inflate(R.layout.english,
+				null);
 		for (int i = 1; i <= 26; i++) {
 			Log.e("test", i + "");
 			int id = getResources().getIdentifier("english" + i, "id",
 					getPackageName());
-			((Button) englishView.findViewById(id))
+			((Button) keyBoardView[2].findViewById(id))
 					.setOnClickListener(new Button.OnClickListener() {
 						@Override
 						public void onClick(View v) {
@@ -315,8 +342,27 @@ public class MainActivity extends InputMethodService implements
 
 						}
 					});
+			((Button) keyBoardView[2].findViewById(id))
+					.setOnTouchListener(new Button.OnTouchListener() {
+
+						@Override
+						public boolean onTouch(View v, MotionEvent event) {
+							switch (event.getAction()) {
+							case MotionEvent.ACTION_DOWN:
+							case MotionEvent.ACTION_MOVE:
+								showTypingWord(((Button) v).getText()
+										.toString(), v.getX(),
+										((LinearLayout) v.getParent()).getY());
+								break;
+							case MotionEvent.ACTION_UP:
+								hideTypingWord(false);
+								break;
+							}
+							return false;
+						}
+					});
 		}
-		((Button) englishView.findViewById(R.id.function2))
+		((Button) keyBoardView[2].findViewById(R.id.function2))
 				.setOnClickListener(new Button.OnClickListener() {
 					@Override
 					public void onClick(View v) {
@@ -326,7 +372,7 @@ public class MainActivity extends InputMethodService implements
 					}
 				});
 
-		((Button) englishView.findViewById(R.id.function6))
+		((Button) keyBoardView[2].findViewById(R.id.function6))
 				.setOnClickListener(new Button.OnClickListener() {
 					@Override
 					public void onClick(View v) {
@@ -337,7 +383,7 @@ public class MainActivity extends InputMethodService implements
 						startActivity(i);
 					}
 				});
-		((Button) englishView.findViewById(R.id.function7))
+		((Button) keyBoardView[2].findViewById(R.id.function7))
 				.setOnClickListener(new Button.OnClickListener() {
 					@Override
 					public void onClick(View v) {
@@ -346,8 +392,8 @@ public class MainActivity extends InputMethodService implements
 
 					}
 				});
-		// return chineseView;
-		return englishView;
+		// return keyBoardView[1];
+		return keyBoardView[2];
 	}
 
 	// handle typing----------------------------------------------------------
@@ -357,14 +403,26 @@ public class MainActivity extends InputMethodService implements
 		case 0:
 			break;
 		case 1:
-			setInputView(chineseView);
+			setInputView(keyBoardView[1]);
 			break;
 		case 2:
-			setInputView(englishView);
+			setInputView(keyBoardView[2]);
 			break;
 		case 3:
 			break;
 		}
+	}
+
+	void showTypingWord(String w, float x, float y) {
+		typingView.setText(w);
+		typingView.setX(x);
+		typingView.setY(y);
+		typingView.setVisibility(View.VISIBLE);
+
+	}
+
+	void hideTypingWord(boolean flag) {
+		typingView.setVisibility(View.GONE);
 	}
 
 	void typeEnglish(String s) {
