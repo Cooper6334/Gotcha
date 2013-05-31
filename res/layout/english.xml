@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <Button
+            android:layout_width="40px"
+            android:layout_height="146px"
+            android:background="@drawable/mybtn"
+            android:textColor="#ffffffff" />
+
+        <Button
+            android:id="@+id/english17"
+            android:layout_width="98px"
+            android:layout_height="146px"
+            android:background="@drawable/mybtn"
+            android:text="q"
+            android:textColor="#ffffffff" />
+
+        <Button
+            android:id="@+id/english23"
+            android:layout_width="99px"
+            android:layout_height="146px"
+            android:background="@drawable/mybtn"
+            android:text="w"
+            android:textColor="#ffffffff" />
+
+        <Button
+            android:id="@+id/english5"
+            android:layout_width="98px"
+            android:layout_height="146px"
+            android:background="@drawable/mybtn"
+            android:text="e"
+            android:textColor="#ffffffff" />
+
+        <Button
+            android:id="@+id/english18"
+            android:layout_width="99px"
+            android:layout_height="146px"
+            android:background="@drawable/mybtn"
+            android:text="r"
+            android:textColor="#ffffffff" />
+
+        <Button
+            android:id="@+id/english20"
+            android:layout_width="98px"
+            android:layout_height="146px"
+            android:background="@drawable/mybtn"
+            android:text="t"
+            android:textColor="#ffffffff" />
+
+        <Button
+            android:id="@+id/english25"
+            android:layout_width="99px"
+            android:layout_height="146px"
+            android:background="@drawable/mybtn"
+            android:text="y"
+            android:textColor="#ffffffff" />
+
+        <Button
+            android:id="@+id/english21"
+            android:layout_width="98px"
+            android:layout_height="146px"
+            android:background="@drawable/mybtn"
+            android:text="u"
+            android:textColor="#ffffffff" />
+
+        <Button
+            android:id="@+id/english9"
+            android:layout_width="99px"
+            android:layout_height="146px"
+            android:background="@drawable/mybtn"
+            android:text="i"
+            android:textColor="#ffffffff" />
+
+        <Button
+            android:id="@+id/english15"
+            android:layout_width="98px"
+            android:layout_height="146px"
+            android:background="@drawable/mybtn"
+            android:text="o"
+            android:textColor="#ffffffff" />
+
+        <Button
+            android:id="@+id/english16"
+            android:layout_width="99px"
+            android:layout_height="146px"
+            android:background="@drawable/mybtn"
+            android:text="p"
+            android:textColor="#ffffffff" />
+
+        <Button
+            android:layout_width="60px"
+            android:layout_height="146px"
+            android:background="@drawable/mybtn"
+            android:textColor="#ffffffff" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <Button
+            android:layout_width="60px"
+            android:layout_height="146px"
+            android:background="@drawable/mybtn"
+            android:textColor="#ffffffff" />
+
+        <Button
+            android:id="@+id/english1"
+            android:layout_width="99px"
+            android:layout_height="146px"
+            android:background="@drawable/mybtn"
+            android:text="a"
+            android:textColor="#ffffffff" />
+
+        <Button
+            android:id="@+id/english19"
+            android:layout_width="98px"
+            android:layout_height="146px"
+            android:background="@drawable/mybtn"
+            android:text="s"
+            android:textColor="#ffffffff" />
+
+        <Button
+            android:id="@+id/english4"
+            android:layout_width="99px"
+            android:layout_height="146px"
+            android:background="@drawable/mybtn"
+            android:text="d"
+            android:textColor="#ffffffff" />
+
+        <Button
+            android:id="@+id/english6"
+            android:layout_width="98px"
+            android:layout_height="146px"
+            android:background="@drawable/mybtn"
+            android:text="f"
+            android:textColor="#ffffffff" />
+
+        <Button
+            android:id="@+id/english7"
+            android:layout_width="99px"
+            android:layout_height="146px"
+            android:background="@drawable/mybtn"
+            android:text="g"
+            android:textColor="#ffffffff" />
+
+        <Button
+            android:id="@+id/english8"
+            android:layout_width="98px"
+            android:layout_height="146px"
+            android:background="@drawable/mybtn"
+            android:text="h"
+            android:textColor="#ffffffff" />
+
+        <Button
+            android:id="@+id/english10"
+            android:layout_width="99px"
+            android:layout_height="146px"
+            android:background="@drawable/mybtn"
+            android:text="j"
+            android:textColor="#ffffffff" />
+
+        <Button
+            android:id="@+id/english11"
+            android:layout_width="98px"
+            android:layout_height="146px"
+            android:background="@drawable/mybtn"
+            android:text="k"
+            android:textColor="#ffffffff" />
+
+        <Button
+            android:id="@+id/english12"
+            android:layout_width="99px"
+            android:layout_height="146px"
+            android:background="@drawable/mybtn"
+            android:text="l"
+            android:textColor="#ffffffff" />
+
+        <Button
+            android:id="@+id/english35"
+            android:layout_width="98px"
+            android:layout_height="146px"
+            android:background="@drawable/mybtn"
+            android:text=";"
+            android:textColor="#ffffffff" />
+
+        <Button
+            android:layout_width="40px"
+            android:layout_height="146px"
+            android:background="@drawable/mybtn"
+            android:textColor="#ffffffff" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <Button
+            android:id="@+id/function1"
+            android:layout_width="99px"
+            android:layout_height="146px"
+            android:background="@drawable/mybtn"
+            android:text="-"
+            android:textColor="#ffffffff" />
+
+        <Button
+            android:id="@+id/english26"
+            android:layout_width="98px"
+            android:layout_height="146px"
+            android:background="@drawable/mybtn"
+            android:text="z"
+            android:textColor="#ffffffff" />
+
+        <Button
+            android:id="@+id/english24"
+            android:layout_width="99px"
+            android:layout_height="146px"
+            android:background="@drawable/mybtn"
+            android:text="x"
+            android:textColor="#ffffffff" />
+
+        <Button
+            android:id="@+id/english3"
+            android:layout_width="98px"
+            android:layout_height="146px"
+            android:background="@drawable/mybtn"
+            android:text="c"
+            android:textColor="#ffffffff" />
+
+        <Button
+            android:id="@+id/english22"
+            android:layout_width="99px"
+            android:layout_height="146px"
+            android:background="@drawable/mybtn"
+            android:text="v"
+            android:textColor="#ffffffff" />
+
+        <Button
+            android:id="@+id/english2"
+            android:layout_width="98px"
+            android:layout_height="146px"
+            android:background="@drawable/mybtn"
+            android:text="b"
+            android:textColor="#ffffffff" />
+
+        <Button
+            android:id="@+id/english14"
+            android:layout_width="99px"
+            android:layout_height="146px"
+            android:background="@drawable/mybtn"
+            android:text="n"
+            android:textColor="#ffffffff" />
+
+        <Button
+            android:id="@+id/english13"
+            android:layout_width="98px"
+            android:layout_height="146px"
+            android:background="@drawable/mybtn"
+            android:text="m"
+            android:textColor="#ffffffff" />
+
+        <Button
+            android:layout_width="99px"
+            android:layout_height="146px"
+            android:background="@drawable/mybtn"
+            android:text=","
+            android:textColor="#ffffffff" />
+
+        <Button
+            android:layout_width="98px"
+            android:layout_height="146px"
+            android:background="@drawable/mybtn"
+            android:text="."
+            android:textColor="#ffffffff" />
+
+        <Button
+            android:layout_width="99px"
+            android:layout_height="146px"
+            android:background="@drawable/mybtn"
+            android:text="\?"
+            android:textColor="#ffffffff" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <Button
+            android:id="@+id/function2"
+            android:layout_width="135px"
+            android:layout_height="146px"
+            android:background="@drawable/mybtn"
+            android:text="注"
+            android:textColor="#ffffffff" />
+
+        <Button
+            android:id="@+id/function3"
+            android:layout_width="135px"
+            android:layout_height="146px"
+            android:background="@drawable/mybtn"
+            android:text="符"
+            android:textColor="#ffffffff" />
+
+        <Button
+            android:id="@+id/function4"
+            android:layout_width="135px"
+            android:layout_height="146px"
+            android:background="@drawable/mybtn"
+            android:text="寫"
+            android:textColor="#ffffffff" />
+
+        <Button
+            android:id="@+id/function5"
+            android:layout_width="135px"
+            android:layout_height="146px"
+            android:background="@drawable/mybtn"
+            android:text="聲"
+            android:textColor="#ffffffff" />
+
+        <Button
+            android:id="@+id/function6"
+            android:layout_width="135px"
+            android:layout_height="146px"
+            android:background="@drawable/mybtn"
+            android:text="聯"
+            android:textColor="#ffffffff" />
+
+        <Button
+            android:id="@+id/function7"
+            android:layout_width="270px"
+            android:layout_height="146px"
+            android:background="@drawable/mybtn"
+            android:text="空白"
+            android:textColor="#ffffffff" />
+
+        <Button
+            android:id="@+id/function8"
+            android:layout_width="135px"
+            android:layout_height="146px"
+            android:background="@drawable/mybtn"
+            android:text="&lt;"
+            android:textColor="#ffffffff" />
+    </LinearLayout>
+
+</LinearLayout>

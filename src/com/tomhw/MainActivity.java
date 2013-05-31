@@ -16,10 +16,17 @@
 
 package com.tomhw;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import xBaseJ.DBF;
+import xBaseJ.Field;
+import xBaseJ.xBaseJException;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -63,12 +70,25 @@ import android.widget.Toast;
 @SuppressLint("NewApi")
 public class MainActivity extends InputMethodService implements
 		KeyboardView.OnKeyboardActionListener {
-	static String testString = "";
+
+	private InputMethodManager mInputMethodManager;
 	static final boolean DEBUG = false;
-	boolean flagWriting = false;
-	int str = 0;
-	String writeWord = "";
 	static final boolean PROCESS_HARD_KEYS = true;
+
+	static String testString = "";
+
+	// 鍵盤
+	private View handWriteView;
+	WriteView writeView;
+	private View drawView;
+	private View englishView;
+	private View chineseView;
+	private View symbolView;
+
+	// 選字
+	HandCandidateView handCandidateView;
+	ChineseCandidateView chineseCandidateView;
+	List<String> candidateList;
 
 	// 建立手写输入对象
 	long recognizer = 0;
@@ -78,15 +98,16 @@ public class MainActivity extends InputMethodService implements
 	int strokes = 0; // 总笔画数
 	int handwriteCount = 0; // 笔画数
 	Path mPath = null;
+	boolean flagWriting = false;
+	int str = 0;
+	String writeWord = "";
 
-	private InputMethodManager mInputMethodManager;
+	// 注音
+	HashMap<String, Integer> chineseWeight = new HashMap<String, Integer>();
+	HashMap<String, ArrayList<String>> chineseSound = new HashMap<String, ArrayList<String>>();
+	String[] chineseAll = { "", "", "", "" };
 
-	private View mInputView;
-	WriteView writeView;
-
-	CandidateView mCandidateView;
-	List<String> stringList;
-
+	// ----------------------------------------------------------------------------
 	Handler handler = new Handler() {
 		@Override
 		public void handleMessage(Message m) {
@@ -127,14 +148,79 @@ public class MainActivity extends InputMethodService implements
 		super.onCreate();
 		mInputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
 
+		String file = Environment.getExternalStorageDirectory()
+				+ "/Gotcha/86tzword.dbf";
+
+		try {
+
+			DBF aDBF = new DBF(file);
+			Field ss = aDBF.getField("DWORD");
+			Field ff = aDBF.getField("KYJD");
+			Field ww = aDBF.getField("DPIWN");
+			// read chinese word
+			for (int i = 1; i <= aDBF.getRecordCount(); i++) {
+				aDBF.read();
+				// 拿字
+				String s = new String(ss.getBytes(), "big5");
+				// 拿注音處理空白跟輕聲
+				String u = new String(ff.getBytes(), "big5");
+				char[] c = u.toCharArray();
+				for (int j = 0; j < c.length; j++) {
+					if ((int) c[j] == 32) {
+						CharSequence cs = u.subSequence(0, j);
+						u = cs.toString();
+						break;
+					}
+				}
+				if (u.contains("˙")) {
+					u = u.substring(1) + "˙";
+				}
+				// 拿weight處理空白
+				String ws = new String(ww.getBytes(), "big5");
+				c = ws.toCharArray();
+				for (int j = 0; j < c.length; j++) {
+					if ((int) c[j] != 32) {
+						CharSequence cs = ws.subSequence(j, c.length);
+						ws = cs.toString();
+						break;
+					}
+				}
+				Integer w = Integer.parseInt(ws);
+
+				if (chineseSound.containsKey(u)) {
+					chineseSound.get(u).add(s);
+				} else {
+					ArrayList<String> a = new ArrayList<String>();
+					a.add(s);
+					chineseSound.put(u, a);
+				}
+				chineseWeight.put(s, w);
+			}
+		} catch (ArrayIndexOutOfBoundsException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (xBaseJException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		Log.e("IME", "onCreate");
 	}
 
 	@Override
 	public View onCreateCandidatesView() {
-		mCandidateView = new CandidateView(this);
-		mCandidateView.setService(this);
-		return mCandidateView;
+		handCandidateView = new HandCandidateView(this);
+		handCandidateView.setService(this);
+
+		chineseCandidateView = new ChineseCandidateView(this);
+		chineseCandidateView.setService(this);
+		return chineseCandidateView;
 	}
 
 	@Override
@@ -145,8 +231,8 @@ public class MainActivity extends InputMethodService implements
 		// R.layout.input, null);
 		// mInputView.setOnKeyboardActionListener(this);
 		// mInputView.setKeyboard(mQwertyKeyboard);
-		mInputView = (View) getLayoutInflater().inflate(R.layout.test, null);
-		((Button) mInputView.findViewById(R.id.button1))
+		handWriteView = (View) getLayoutInflater().inflate(R.layout.test, null);
+		((Button) handWriteView.findViewById(R.id.button1))
 				.setOnClickListener(new Button.OnClickListener() {
 
 					@Override
@@ -161,84 +247,152 @@ public class MainActivity extends InputMethodService implements
 				});
 		writeView = new WriteView(this);
 		writeView.setId(123);
-		((LinearLayout) mInputView.findViewById(R.id.linearlayout))
+		((LinearLayout) handWriteView.findViewById(R.id.linearlayout))
 				.addView(writeView);
 
-		return mInputView;
-	}
+		chineseView = (View) getLayoutInflater()
+				.inflate(R.layout.chinese, null);
+		for (int i = 1; i <= 41; i++) {
+			int id = getResources().getIdentifier("chinese" + i, "id",
+					getPackageName());
+			Button btn = ((Button) chineseView.findViewById(id));
+			btn.setTag(i);
+			btn.setOnClickListener(new Button.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					// TODO Auto-generated method stub
+					int i = (Integer) v.getTag();
+					typeChinese(((Button) v).getText().toString(), i);
 
-	@Override
-	public void onStartInput(EditorInfo attribute, boolean restarting) {
-		super.onStartInput(attribute, restarting);
-		Log.e("IME", "onStart");
-		if (!testString.equals("")) {
-			getCurrentInputConnection().commitText(testString,
-					testString.length());
-			testString = "";
+				}
+			});
 		}
-		handler.sendEmptyMessage(1);
+		((Button) chineseView.findViewById(R.id.function2))
+				.setOnClickListener(new Button.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						// TODO Auto-generated method stub
+						setKeyboard(2);
+
+					}
+				});
+		((Button) chineseView.findViewById(R.id.function6))
+				.setOnClickListener(new Button.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						// TODO Auto-generated method stub
+						Intent i = new Intent(MainActivity.this,
+								FindActivity.class);
+						i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+						startActivity(i);
+					}
+				});
+		((Button) chineseView.findViewById(R.id.function7))
+				.setOnClickListener(new Button.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						// TODO Auto-generated method stub
+						for (int i = 0; i < 4; i++) {
+							chineseAll[i] = "";
+						}
+						chineseCandidateView.setSuggestions(null, true, true);
+						getCurrentInputConnection().commitText(" ", 1);
+
+					}
+				});
+		englishView = (View) getLayoutInflater()
+				.inflate(R.layout.english, null);
+		for (int i = 1; i <= 26; i++) {
+			Log.e("test", i + "");
+			int id = getResources().getIdentifier("english" + i, "id",
+					getPackageName());
+			((Button) englishView.findViewById(id))
+					.setOnClickListener(new Button.OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							// TODO Auto-generated method stub
+							typeEnglish(((Button) v).getText().toString());
+
+						}
+					});
+		}
+		((Button) englishView.findViewById(R.id.function2))
+				.setOnClickListener(new Button.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						// TODO Auto-generated method stub
+						setKeyboard(1);
+
+					}
+				});
+
+		((Button) englishView.findViewById(R.id.function6))
+				.setOnClickListener(new Button.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						// TODO Auto-generated method stub
+						Intent i = new Intent(MainActivity.this,
+								FindActivity.class);
+						i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+						startActivity(i);
+					}
+				});
+		((Button) englishView.findViewById(R.id.function7))
+				.setOnClickListener(new Button.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						// TODO Auto-generated method stub
+						getCurrentInputConnection().commitText(" ", 1);
+
+					}
+				});
+		// return chineseView;
+		return englishView;
 	}
 
-	@Override
-	public void onFinishInput() {
-		super.onFinishInput();
-		Log.e("IME", "onFinish");
+	// handle typing----------------------------------------------------------
+	// 0手寫1注音2英文3符號
+	void setKeyboard(int num) {
+		switch (num) {
+		case 0:
+			break;
+		case 1:
+			setInputView(chineseView);
+			break;
+		case 2:
+			setInputView(englishView);
+			break;
+		case 3:
+			break;
+		}
 	}
 
-	public void pickSuggestionManually(int index) {
-		// Toast.makeText(this, "" + index, Toast.LENGTH_LONG).show();
-		getCurrentInputConnection().commitText(stringList.get(index),
-				stringList.get(index).length());
-		writeWord = "";
-		setCandidatesViewShown(false);
-
+	void typeEnglish(String s) {
+		getCurrentInputConnection().commitText(s, 1);
 	}
 
-	@Override
-	public void onKey(int primaryCode, int[] keyCodes) {
-		// TODO Auto-generated method stub
+	void typeChinese(String s, int n) {
+		String[] tmp = chineseAll.clone();
+		if (n <= 21) {
+			tmp[0] = s;
+		} else if (n <= 24) {
+			tmp[1] = s;
+		} else if (n <= 37) {
+			tmp[2] = s;
+		} else if (n <= 41) {
+			tmp[3] = s;
+		}
+		String q = tmp[0] + tmp[1] + tmp[2] + tmp[3];
+		chineseAll = tmp;
 
-	}
-
-	@Override
-	public void onPress(int primaryCode) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onRelease(int primaryCode) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onText(CharSequence text) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void swipeDown() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void swipeLeft() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void swipeRight() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void swipeUp() {
-		// TODO Auto-generated method stub
+		setCandidatesViewShown(true);
+		if (!chineseSound.containsKey(q)) {
+			candidateList = new ArrayList<String>();
+		} else {
+			candidateList = (List<String>) (chineseSound.get(q)).clone();
+		}
+		candidateList.add(0, q);
+		chineseCandidateView.setSuggestions(candidateList, true, true);
 
 	}
 
@@ -287,8 +441,8 @@ public class MainActivity extends InputMethodService implements
 			if (character == 0) {
 				character = characterNew();
 				characterClear(character);
-				characterSetWidth(character, 300);
-				characterSetHeight(character, 300);
+				characterSetWidth(character, 1000);
+				characterSetHeight(character, 1000);
 			}
 			if (recognizer == 0) {
 				recognizer = recognizerNew();
@@ -331,8 +485,8 @@ public class MainActivity extends InputMethodService implements
 
 			case MotionEvent.ACTION_MOVE:
 				mPath.quadTo(posX, posY, x, y); // 随触摸移动设置轨迹
-				characterAdd(character, handwriteCount, (int) x / 2,
-						(int) y / 2);
+				characterAdd(character, handwriteCount,
+						(int) (x * (1000f / 600)), (int) (y * (1000f / 600)));
 				break;
 
 			case MotionEvent.ACTION_UP:
@@ -345,19 +499,29 @@ public class MainActivity extends InputMethodService implements
 					if (result > 0) {
 						writeWord = resultValue(result, 0);
 
-						stringList = new ArrayList<String>();
+						candidateList = new ArrayList<String>();
 
 						for (int i = 0; i < result; i++) {
 							String s = resultValue(result, i);
 							if (s != null) {
-								stringList.add(s);
+								candidateList.add(s);
 							}
 							if (i > 10) {
 								break;
 							}
 						}
+						ArrayList<String> tmp = new ArrayList<String>();
+						for (int i = candidateList.size() - 1; i >= 0; i--) {
+							if (chineseWeight.get(candidateList.get(i)) == null) {
+								tmp.add(candidateList.remove(i));
+							}
+						}
+						for (int i = tmp.size() - 1; i >= 0; i--) {
+							candidateList.add(tmp.get(i));
+						}
 						setCandidatesViewShown(true);
-						mCandidateView.setSuggestions(stringList, true, true);
+						handCandidateView.setSuggestions(candidateList, true,
+								true);
 					}
 				}
 				handler.sendEmptyMessageDelayed(0, 1000);
@@ -444,6 +608,86 @@ public class MainActivity extends InputMethodService implements
 		 */
 	}
 
+	// IME------------------------------------------------------------
+	@Override
+	public void onStartInput(EditorInfo attribute, boolean restarting) {
+		super.onStartInput(attribute, restarting);
+		Log.e("IME", "onStart");
+		if (!testString.equals("")) {
+			getCurrentInputConnection().commitText(testString,
+					testString.length());
+			testString = "";
+		}
+		handler.sendEmptyMessage(1);
+	}
+
+	@Override
+	public void onFinishInput() {
+		super.onFinishInput();
+		Log.e("IME", "onFinish");
+	}
+
+	public void pickSuggestionManually(int index) {
+		// Toast.makeText(this, "" + index, Toast.LENGTH_LONG).show();
+		getCurrentInputConnection().commitText(candidateList.get(index),
+				candidateList.get(index).length());
+		writeWord = "";
+		for (int i = 0; i < 4; i++) {
+			chineseAll[i] = "";
+		}
+		setCandidatesViewShown(false);
+
+	}
+
+	@Override
+	public void onKey(int primaryCode, int[] keyCodes) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onPress(int primaryCode) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onRelease(int primaryCode) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onText(CharSequence text) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void swipeDown() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void swipeLeft() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void swipeRight() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void swipeUp() {
+		// TODO Auto-generated method stub
+
+	}
+
+	// --------------------------------------------------------------
 	// jni封装方法的声明
 	// charater
 	public native long characterNew();

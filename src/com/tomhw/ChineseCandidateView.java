@@ -29,7 +29,7 @@ import android.view.View;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CandidateView extends View {
+public class ChineseCandidateView extends View {
 
 	private static final int OUT_OF_BOUNDS = -1;
 
@@ -70,7 +70,7 @@ public class CandidateView extends View {
 	 * @param context
 	 * @param attrs
 	 */
-	public CandidateView(Context context) {
+	public ChineseCandidateView(Context context) {
 		super(context);
 		mSelectionHighlight = context.getResources().getDrawable(
 				android.R.drawable.list_selector_background);
@@ -171,6 +171,7 @@ public class CandidateView extends View {
 				getBackground().getPadding(mBgPadding);
 			}
 		}
+
 		int x = 0;
 		final int count = mSuggestions.size();
 		final int height = getHeight();

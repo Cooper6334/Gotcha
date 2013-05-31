@@ -1,8 +1,12 @@
 package com.tomhw;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -11,32 +15,32 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.zip.GZIPInputStream;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
+import xBaseJ.DBF;
+import xBaseJ.Field;
+import xBaseJ.xBaseJException;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.speech.RecognizerIntent;
 import android.util.Log;
-import android.view.Menu;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class FindActivity extends Activity {
 
@@ -115,6 +119,8 @@ public class FindActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+
+
 		// listView = (ListView) findViewById(R.id.listView1);
 		//
 		// listView.setOnItemClickListener(new ListView.OnItemClickListener() {
@@ -130,6 +136,7 @@ public class FindActivity extends Activity {
 		//
 		// }
 		// });
+
 		nameViews[0] = (TextView) findViewById(R.id.textView1);
 		nameViews[1] = (TextView) findViewById(R.id.textView2);
 		nameViews[2] = (TextView) findViewById(R.id.textView3);
@@ -187,7 +194,7 @@ public class FindActivity extends Activity {
 					});
 
 		}
-
+		// 語音輸入
 		((Button) dialog.findViewById(R.id.button1))
 				.setOnClickListener(new Button.OnClickListener() {
 
@@ -196,6 +203,7 @@ public class FindActivity extends Activity {
 						startVoiceRecognitionActivity();
 					}
 				});
+		// query
 		((Button) dialog.findViewById(R.id.button2))
 				.setOnClickListener(new Button.OnClickListener() {
 
@@ -214,6 +222,7 @@ public class FindActivity extends Activity {
 
 					}
 				});
+		// cancel
 		((Button) dialog.findViewById(R.id.button3))
 				.setOnClickListener(new Button.OnClickListener() {
 
@@ -222,7 +231,7 @@ public class FindActivity extends Activity {
 						dialog.dismiss();
 					}
 				});
-
+		// add
 		((Button) findViewById(R.id.button1))
 				.setOnClickListener(new Button.OnClickListener() {
 
@@ -234,7 +243,7 @@ public class FindActivity extends Activity {
 					}
 
 				});
-
+		// reset
 		((Button) findViewById(R.id.button2))
 				.setOnClickListener(new Button.OnClickListener() {
 
@@ -449,4 +458,5 @@ public class FindActivity extends Activity {
 
 		super.onActivityResult(requestCode, resultCode, data);
 	}
+
 }
