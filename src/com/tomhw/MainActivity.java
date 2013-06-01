@@ -229,6 +229,8 @@ public class MainActivity extends InputMethodService implements
 		// R.layout.input, null);
 		// mInputView.setOnKeyboardActionListener(this);
 		// mInputView.setKeyboard(mQwertyKeyboard);
+
+		// 鍵盤按到提示---------------------------------
 		RelativeLayout layout = new RelativeLayout(this);
 		this.getWindow().addContentView(
 				layout,
@@ -240,6 +242,7 @@ public class MainActivity extends InputMethodService implements
 		typingView.setVisibility(View.GONE);
 		layout.addView(typingView);
 
+		// 手寫輸入---------------------------------
 		keyBoardView[0] = (View) getLayoutInflater().inflate(R.layout.test,
 				null);
 		((Button) keyBoardView[0].findViewById(R.id.button1))
@@ -260,6 +263,7 @@ public class MainActivity extends InputMethodService implements
 		((LinearLayout) keyBoardView[0].findViewById(R.id.linearlayout))
 				.addView(writeView);
 
+		// 注音輸入---------------------------------
 		keyBoardView[1] = (View) getLayoutInflater().inflate(R.layout.chinese,
 				null);
 		for (int i = 1; i <= 41; i++) {
@@ -303,17 +307,6 @@ public class MainActivity extends InputMethodService implements
 
 					}
 				});
-		((Button) keyBoardView[1].findViewById(R.id.function6))
-				.setOnClickListener(new Button.OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						// TODO Auto-generated method stub
-						Intent i = new Intent(MainActivity.this,
-								FindActivity.class);
-						i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-						startActivity(i);
-					}
-				});
 		((Button) keyBoardView[1].findViewById(R.id.function7))
 				.setOnClickListener(new Button.OnClickListener() {
 					@Override
@@ -327,6 +320,8 @@ public class MainActivity extends InputMethodService implements
 
 					}
 				});
+
+		// 英文鍵盤
 		keyBoardView[2] = (View) getLayoutInflater().inflate(R.layout.english,
 				null);
 		for (int i = 1; i <= 26; i++) {
@@ -372,17 +367,6 @@ public class MainActivity extends InputMethodService implements
 					}
 				});
 
-		((Button) keyBoardView[2].findViewById(R.id.function6))
-				.setOnClickListener(new Button.OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						// TODO Auto-generated method stub
-						Intent i = new Intent(MainActivity.this,
-								FindActivity.class);
-						i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-						startActivity(i);
-					}
-				});
 		((Button) keyBoardView[2].findViewById(R.id.function7))
 				.setOnClickListener(new Button.OnClickListener() {
 					@Override
@@ -393,6 +377,43 @@ public class MainActivity extends InputMethodService implements
 					}
 				});
 		// return keyBoardView[1];
+
+		// 共通按鈕---------------------------------------------------
+		for (int i = 0; i < 4; i++) {
+			if (keyBoardView[i] != null) {
+				// 手繪
+				Button b = ((Button) keyBoardView[i]
+						.findViewById(R.id.function4));
+				if (b != null) {
+					b.setOnClickListener(new Button.OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							// TODO Auto-generated method stub
+							Intent i = new Intent(MainActivity.this,
+									DrawActivity.class);
+							i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+							startActivity(i);
+
+						}
+					});
+
+					// 聯想
+					b = ((Button) keyBoardView[i].findViewById(R.id.function6));
+					if (b != null) {
+						b.setOnClickListener(new Button.OnClickListener() {
+							@Override
+							public void onClick(View v) {
+								// TODO Auto-generated method stub
+								Intent i = new Intent(MainActivity.this,
+										FindActivity.class);
+								i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+								startActivity(i);
+							}
+						});
+					}
+				}
+			}
+		}
 		return keyBoardView[2];
 	}
 
@@ -682,6 +703,10 @@ public class MainActivity extends InputMethodService implements
 	@Override
 	public void onFinishInput() {
 		super.onFinishInput();
+		for (int i = 0; i < 4; i++) {
+			chineseAll[i] = "";
+			chineseCandidateView.setSuggestions(null, true, true);
+		}
 		Log.e("IME", "onFinish");
 	}
 
