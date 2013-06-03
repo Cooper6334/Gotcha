@@ -393,7 +393,7 @@
             android:layout_width="135px"
             android:layout_height="146px"
             android:background="@drawable/mybtn"
-            android:text="英"
+            android:text="符"
             android:textColor="#ffffffff" />
 
         <Button
@@ -401,7 +401,7 @@
             android:layout_width="135px"
             android:layout_height="146px"
             android:background="@drawable/mybtn"
-            android:text="符"
+            android:text="切"
             android:textColor="#ffffffff" />
 
         <Button

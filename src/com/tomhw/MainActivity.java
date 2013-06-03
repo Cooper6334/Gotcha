@@ -49,6 +49,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.SurfaceHolder.Callback;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup.LayoutParams;
 import android.view.inputmethod.CompletionInfo;
 import android.view.inputmethod.EditorInfo;
@@ -77,13 +78,17 @@ public class MainActivity extends InputMethodService implements
 	static final boolean PROCESS_HARD_KEYS = true;
 
 	static String testString = "";
+	final int initKeyboard = 0;
 
 	// 鍵盤
+	int nowKeyboard = initKeyboard;
 	View[] keyBoardView = new View[4];
 	WriteView writeView;
 	TextView typingView;
+	SelectKeyboardView selectKeyboardView;
 
 	// 選字
+	// LinearLayout handCandidateLayout;
 	HandCandidateView handCandidateView;
 	ChineseCandidateView chineseCandidateView;
 	List<String> candidateList;
@@ -146,6 +151,7 @@ public class MainActivity extends InputMethodService implements
 		super.onCreate();
 		mInputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
 
+		// 初始化注音字庫-------------------------------------
 		String file = Environment.getExternalStorageDirectory()
 				+ "/Gotcha/86tzword.dbf";
 
@@ -213,11 +219,20 @@ public class MainActivity extends InputMethodService implements
 
 	@Override
 	public View onCreateCandidatesView() {
-		handCandidateView = new HandCandidateView(this);
-		handCandidateView.setService(this);
+		// handCandidateView = new HandCandidateView(this);
+		// handCandidateView.setService(this);
+		//
+		// handCandidateView.setX(204);
+		// handCandidateView.setY(0);
+		//
+		// if (initKeyboard == 0) {
+		// setCandidatesViewShown(true);
+		// return handCandidateView;
+		// }
 
 		chineseCandidateView = new ChineseCandidateView(this);
 		chineseCandidateView.setService(this);
+
 		return chineseCandidateView;
 	}
 
@@ -242,26 +257,25 @@ public class MainActivity extends InputMethodService implements
 		typingView.setVisibility(View.GONE);
 		layout.addView(typingView);
 
+		selectKeyboardView = new SelectKeyboardView(this);
+		selectKeyboardView.setVisibility(View.GONE);
+		layout.addView(selectKeyboardView);
 		// 手寫輸入---------------------------------
-		keyBoardView[0] = (View) getLayoutInflater().inflate(R.layout.test,
-				null);
-		((Button) keyBoardView[0].findViewById(R.id.button1))
-				.setOnClickListener(new Button.OnClickListener() {
-
-					@Override
-					public void onClick(View v) {
-						// TODO Auto-generated method stub
-						Intent i = new Intent(MainActivity.this,
-								FindActivity.class);
-						i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-						startActivity(i);
-
-					}
-				});
+		keyBoardView[0] = (View) getLayoutInflater().inflate(
+				R.layout.handwrite, null);
 		writeView = new WriteView(this);
 		writeView.setId(123);
-		((LinearLayout) keyBoardView[0].findViewById(R.id.linearlayout))
+
+		((LinearLayout) keyBoardView[0].findViewById(R.id.linearLayout2))
 				.addView(writeView);
+
+		handCandidateView = new HandCandidateView(this);
+		handCandidateView.setService(this);
+		handCandidateView.setLayoutParams(new RelativeLayout.LayoutParams(292,
+				584));
+		handCandidateView.setX(788);
+		((RelativeLayout) keyBoardView[0].findViewById(R.id.relative))
+				.addView(handCandidateView);
 
 		// 注音輸入---------------------------------
 		keyBoardView[1] = (View) getLayoutInflater().inflate(R.layout.chinese,
@@ -291,22 +305,13 @@ public class MainActivity extends InputMethodService implements
 								v.getX(), ((LinearLayout) v.getParent()).getY());
 						break;
 					case MotionEvent.ACTION_UP:
-						hideTypingWord(false);
+						hideTypingWord();
 						break;
 					}
 					return false;
 				}
 			});
 		}
-		((Button) keyBoardView[1].findViewById(R.id.function2))
-				.setOnClickListener(new Button.OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						// TODO Auto-generated method stub
-						setKeyboard(2);
-
-					}
-				});
 		((Button) keyBoardView[1].findViewById(R.id.function7))
 				.setOnClickListener(new Button.OnClickListener() {
 					@Override
@@ -325,7 +330,7 @@ public class MainActivity extends InputMethodService implements
 		keyBoardView[2] = (View) getLayoutInflater().inflate(R.layout.english,
 				null);
 		for (int i = 1; i <= 26; i++) {
-			Log.e("test", i + "");
+			// Log.e("test", i + "");
 			int id = getResources().getIdentifier("english" + i, "id",
 					getPackageName());
 			((Button) keyBoardView[2].findViewById(id))
@@ -350,22 +355,13 @@ public class MainActivity extends InputMethodService implements
 										((LinearLayout) v.getParent()).getY());
 								break;
 							case MotionEvent.ACTION_UP:
-								hideTypingWord(false);
+								hideTypingWord();
 								break;
 							}
 							return false;
 						}
 					});
 		}
-		((Button) keyBoardView[2].findViewById(R.id.function2))
-				.setOnClickListener(new Button.OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						// TODO Auto-generated method stub
-						setKeyboard(1);
-
-					}
-				});
 
 		((Button) keyBoardView[2].findViewById(R.id.function7))
 				.setOnClickListener(new Button.OnClickListener() {
@@ -381,9 +377,50 @@ public class MainActivity extends InputMethodService implements
 		// 共通按鈕---------------------------------------------------
 		for (int i = 0; i < 4; i++) {
 			if (keyBoardView[i] != null) {
-				// 手繪
+				// 切換鍵盤
 				Button b = ((Button) keyBoardView[i]
-						.findViewById(R.id.function4));
+						.findViewById(R.id.function3));
+				if (b != null) {
+					// b.setOnClickListener(new Button.OnClickListener() {
+					// @Override
+					// public void onClick(View v) {
+					// // TODO Auto-generated method stub
+					// setKeyboard(1);
+					//
+					// }
+					// });
+					b.setOnTouchListener(new Button.OnTouchListener() {
+
+						@Override
+						public boolean onTouch(View v, MotionEvent event) {
+							Log.e("touch", event.getX() + ":" + event.getY());
+							switch (event.getAction()) {
+							case MotionEvent.ACTION_DOWN:
+								selectKeyboardView.nextKeyboard();
+								showSelectKeyboard(
+										v.getX(),
+										((LinearLayout) v.getParent()).getY() - 300);
+								break;
+							case MotionEvent.ACTION_MOVE:
+								if (event.getY() < 0) {
+									int f = (int) ((event.getY() + 300) / 100);
+									if (f < 0) {
+										f = 0;
+									}
+									selectKeyboardView.setTarget(f);
+								}
+								break;
+							case MotionEvent.ACTION_UP:
+								hideSelectKeyboard();
+								setKeyboard(selectKeyboardView.selectKeyboard);
+								break;
+							}
+							return false;
+						}
+					});
+				}
+				// 手繪
+				b = ((Button) keyBoardView[i].findViewById(R.id.function4));
 				if (b != null) {
 					b.setOnClickListener(new Button.OnClickListener() {
 						@Override
@@ -414,24 +451,31 @@ public class MainActivity extends InputMethodService implements
 				}
 			}
 		}
-		return keyBoardView[2];
+		selectKeyboardView.selectKeyboard = initKeyboard;
+		if (initKeyboard != 1) {
+			setCandidatesViewShown(false);
+		} else {
+			setCandidatesViewShown(true);
+		}
+		return keyBoardView[initKeyboard];
 	}
 
 	// handle typing----------------------------------------------------------
 	// 0手寫1注音2英文3符號
 	void setKeyboard(int num) {
-		switch (num) {
-		case 0:
-			break;
-		case 1:
-			setInputView(keyBoardView[1]);
-			break;
-		case 2:
-			setInputView(keyBoardView[2]);
-			break;
-		case 3:
-			break;
-		}
+		setInputView(keyBoardView[num]);
+		chineseCandidateView.setSuggestions(null, true, true);
+		handCandidateView.setSuggestions(null, true, true);
+		setCandidatesViewShown(false);
+		// if (num == 1) {
+		// setCandidatesView(chineseCandidateView);
+		//
+		// } else if (num == 0) {
+		// setCandidatesView(handCandidateView);
+		// setCandidatesViewShown(true);
+		//
+		// }
+		nowKeyboard = num;
 	}
 
 	void showTypingWord(String w, float x, float y) {
@@ -442,8 +486,18 @@ public class MainActivity extends InputMethodService implements
 
 	}
 
-	void hideTypingWord(boolean flag) {
+	void hideTypingWord() {
 		typingView.setVisibility(View.GONE);
+	}
+
+	void showSelectKeyboard(float x, float y) {
+		selectKeyboardView.setX(x);
+		selectKeyboardView.setY(y);
+		selectKeyboardView.setVisibility(View.VISIBLE);
+	}
+
+	void hideSelectKeyboard() {
+		selectKeyboardView.setVisibility(View.GONE);
 	}
 
 	void typeEnglish(String s) {
@@ -464,7 +518,6 @@ public class MainActivity extends InputMethodService implements
 		String q = tmp[0] + tmp[1] + tmp[2] + tmp[3];
 		chineseAll = tmp;
 
-		setCandidatesViewShown(true);
 		if (!chineseSound.containsKey(q)) {
 			candidateList = new ArrayList<String>();
 		} else {
@@ -472,7 +525,21 @@ public class MainActivity extends InputMethodService implements
 		}
 		candidateList.add(0, q);
 		chineseCandidateView.setSuggestions(candidateList, true, true);
+		setCandidatesViewShown(true);
 
+	}
+
+	void openHandCandidate(boolean flag) {
+		Toast.makeText(this, "open hand " + flag, Toast.LENGTH_SHORT).show();
+		if (flag) {
+			handCandidateView.setLayoutParams(new RelativeLayout.LayoutParams(
+					876, 584));
+			handCandidateView.setX(204);
+		} else {
+			handCandidateView.setLayoutParams(new RelativeLayout.LayoutParams(
+					292, 584));
+			handCandidateView.setX(788);
+		}
 	}
 
 	// 能显示出手写轨迹的view
@@ -706,6 +773,7 @@ public class MainActivity extends InputMethodService implements
 		for (int i = 0; i < 4; i++) {
 			chineseAll[i] = "";
 			chineseCandidateView.setSuggestions(null, true, true);
+			setCandidatesViewShown(false);
 		}
 		Log.e("IME", "onFinish");
 	}
@@ -715,13 +783,19 @@ public class MainActivity extends InputMethodService implements
 		getCurrentInputConnection().commitText(candidateList.get(index),
 				candidateList.get(index).length());
 		writeWord = "";
-		for (int i = 0; i < 4; i++) {
-			chineseAll[i] = "";
-		}
-		setCandidatesViewShown(false);
 
+		if (nowKeyboard == 1) {
+			for (int i = 0; i < 4; i++) {
+				chineseAll[i] = "";
+			}
+			chineseCandidateView.setSuggestions(null, true, true);
+			setCandidatesViewShown(false);
+		} else if (nowKeyboard == 0) {
+			handCandidateView.setSuggestions(null, true, true);
+		}
 	}
 
+	// ------------------------------------------------------------------------------------
 	@Override
 	public void onKey(int primaryCode, int[] keyCodes) {
 		// TODO Auto-generated method stub

@@ -19,6 +19,7 @@ package com.tomhw;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
@@ -63,6 +64,7 @@ public class HandCandidateView extends View {
 	private int mTotalWidth;
 
 	private GestureDetector mGestureDetector;
+	boolean flagOpen = false;
 
 	/**
 	 * Construct a CandidateView for showing suggested words for completion.
@@ -120,6 +122,8 @@ public class HandCandidateView extends View {
 		setWillNotDraw(false);
 		setHorizontalScrollBarEnabled(false);
 		setVerticalScrollBarEnabled(false);
+
+//		mService.openHandCandidate(flagOpen);
 	}
 
 	/**
@@ -204,6 +208,8 @@ public class HandCandidateView extends View {
 			}
 
 			if (canvas != null) {
+
+				canvas.drawColor(Color.argb(100, 0, 0, 0));
 				if ((i == 1 && !typedWordValid) || (i == 0 && typedWordValid)) {
 					paint.setFakeBoldText(true);
 					paint.setColor(mColorRecommended);
@@ -293,9 +299,12 @@ public class HandCandidateView extends View {
 			invalidate();
 			break;
 		case MotionEvent.ACTION_UP:
+			flagOpen = !flagOpen;
+			mService.openHandCandidate(flagOpen);
+
 			if (!mScrolled) {
 				if (mSelectedIndex >= 0) {
-					mService.pickSuggestionManually(mSelectedIndex);
+					// mService.pickSuggestionManually(mSelectedIndex);
 				}
 			}
 			mSelectedIndex = -1;
