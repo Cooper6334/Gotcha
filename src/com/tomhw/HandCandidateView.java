@@ -158,8 +158,19 @@ public class HandCandidateView extends View {
 						y += 146;
 					}
 				}
-				canvas.drawBitmap(open[0], 0, 438, null);
-				canvas.drawBitmap(delete[0], 146, 438, null);
+				
+				if (selectWord == -2) {
+					canvas.drawBitmap(open[1], 0, 438, null);
+				} else {
+					canvas.drawBitmap(open[0], 0, 438, null);
+				}
+				if (selectWord == -3) {
+					canvas.drawBitmap(delete[1], 146, 438, null);
+				} else {
+					canvas.drawBitmap(delete[0], 146, 438, null);
+				}
+
+	
 				// mTotalWidth = x;
 				// if (mTargetScrollX != getScrollX()) {
 				// scrollToTarget();
@@ -199,8 +210,17 @@ public class HandCandidateView extends View {
 					}
 				}
 
-				canvas.drawBitmap(close[0], 0, 0, null);
-				canvas.drawBitmap(delete[0], getWidth() - 146, 438, null);
+				if (selectWord == -2) {
+					canvas.drawBitmap(close[1], 0, 0, null);
+				} else {
+					canvas.drawBitmap(close[0], 0, 0, null);
+				}
+				if (selectWord == -3) {
+					canvas.drawBitmap(delete[1], getWidth() - 146, 438, null);
+				} else {
+					canvas.drawBitmap(delete[0], getWidth() - 146, 438, null);
+				}
+
 			}
 		}
 	}

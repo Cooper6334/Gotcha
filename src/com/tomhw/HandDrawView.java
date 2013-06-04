@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.net.URI;
+import java.util.ArrayList;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -24,7 +25,8 @@ import android.view.SurfaceView;
 public class HandDrawView extends SurfaceView {
 
 	Path mPath = null;
-
+	int mColor = Color.BLACK;
+	ArrayList<MyPath> allPath = new ArrayList<MyPath>();
 	SurfaceHolder mSurfaceHolder = null;
 
 	Paint mPaint = null;
@@ -48,8 +50,10 @@ public class HandDrawView extends SurfaceView {
 		this.setFocusable(true);
 		// 设置触摸时拥有焦点
 		this.setFocusableInTouchMode(true);
+
 		// 获取holder
 		mSurfaceHolder = this.getHolder();
+		// mSurfaceHolder.setFormat(PixelFormat.TRANSLUCENT);
 		// 添加holder到callback函数之中
 		// mSurfaceHolder.addCallback(this);
 
@@ -61,7 +65,7 @@ public class HandDrawView extends SurfaceView {
 		// 意思分别为 空心 、实心、实心与空心
 		mPaint.setStyle(Paint.Style.STROKE);
 		mPaint.setStrokeCap(Paint.Cap.ROUND);// 设置画笔为圆滑状
-		mPaint.setStrokeWidth(5);// 设置线的宽度
+		mPaint.setStrokeWidth(10);// 设置线的宽度
 
 		// 创建路径轨迹
 		mPath = new Path();
@@ -91,7 +95,7 @@ public class HandDrawView extends SurfaceView {
 		// 意思分别为 空心 、实心、实心与空心
 		mPaint.setStyle(Paint.Style.STROKE);
 		mPaint.setStrokeCap(Paint.Cap.ROUND);// 设置画笔为圆滑状
-		mPaint.setStrokeWidth(5);// 设置线的宽度
+		mPaint.setStrokeWidth(10);// 设置线的宽度
 
 		// 创建路径轨迹
 		mPath = new Path();
@@ -131,6 +135,21 @@ public class HandDrawView extends SurfaceView {
 		Canvas mCanvas = mSurfaceHolder.lockCanvas();
 		if (mCanvas != null) {
 			mCanvas.drawColor(Color.WHITE); // 清空画布
+			for (MyPath p : allPath) {
+				mPaint.setColor(p.color);
+				if (p.color == Color.WHITE) {
+					mPaint.setStrokeWidth(20);
+				} else {
+					mPaint.setStrokeWidth(10);
+				}
+				mCanvas.drawPath(p.path, mPaint); // 画出轨迹
+			}
+			mPaint.setColor(mColor);
+			if (mColor == Color.WHITE) {
+				mPaint.setStrokeWidth(20);
+			} else {
+				mPaint.setStrokeWidth(10);
+			}
 			mCanvas.drawPath(mPath, mPaint); // 画出轨迹
 			mSurfaceHolder.unlockCanvasAndPost(mCanvas);
 		}
@@ -144,6 +163,21 @@ public class HandDrawView extends SurfaceView {
 				Bitmap.Config.ARGB_8888);
 		Canvas canvas = new Canvas(b);
 		canvas.drawColor(Color.WHITE); // 清空画布
+		for (MyPath p : allPath) {
+			mPaint.setColor(p.color);
+			if (p.color == Color.WHITE) {
+				mPaint.setStrokeWidth(20);
+			} else {
+				mPaint.setStrokeWidth(10);
+			}
+			canvas.drawPath(p.path, mPaint); // 画出轨迹
+		}
+		if (mColor == Color.WHITE) {
+			mPaint.setStrokeWidth(20);
+		} else {
+			mPaint.setStrokeWidth(10);
+		}
+		mPaint.setColor(mColor);
 		canvas.drawPath(mPath, mPaint); // 画出轨迹
 		File dir = Environment.getExternalStorageDirectory();
 		// 產生要寫入的檔案
@@ -166,6 +200,7 @@ public class HandDrawView extends SurfaceView {
 	}
 
 	boolean clear() {
+		allPath.clear();
 		mPath.reset();
 		Canvas mCanvas = mSurfaceHolder.lockCanvas();
 		if (mCanvas != null) {
@@ -178,5 +213,23 @@ public class HandDrawView extends SurfaceView {
 
 	void init() {
 		h.sendEmptyMessage(0);
+	}
+
+	void setColor(int c) {
+		MyPath p = new MyPath(mPath, mColor);
+		allPath.add(p);
+		mPath = new Path();
+		mColor = c;
+
+	}
+
+	class MyPath {
+		Path path;
+		int color;
+
+		MyPath(Path p, int c) {
+			path = p;
+			color = c;
+		}
 	}
 }
