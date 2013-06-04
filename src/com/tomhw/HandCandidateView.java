@@ -158,7 +158,7 @@ public class HandCandidateView extends View {
 						y += 146;
 					}
 				}
-				
+
 				if (selectWord == -2) {
 					canvas.drawBitmap(open[1], 0, 438, null);
 				} else {
@@ -170,7 +170,6 @@ public class HandCandidateView extends View {
 					canvas.drawBitmap(delete[0], 146, 438, null);
 				}
 
-	
 				// mTotalWidth = x;
 				// if (mTargetScrollX != getScrollX()) {
 				// scrollToTarget();
@@ -284,8 +283,7 @@ public class HandCandidateView extends View {
 				mService.openHandCandidate(flagOpen, mSuggestions.size() + 1);
 
 			} else if (selectWord == -3) {
-				// Toast.makeText(getContext(), "-3",
-				// Toast.LENGTH_SHORT).show();
+				mService.deleteHandWord();
 			} else if (selectWord >= 0 && selectWord < mSuggestions.size()) {
 				mService.pickSuggestionManually(selectWord);
 				if (flagOpen) {

@@ -36,11 +36,14 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.inputmethodservice.InputMethodService;
+import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.text.InputType;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -129,7 +132,6 @@ public class MainActivity extends InputMethodService implements
 				strokes = 0;
 				mPath.reset();// 触摸结束即清除轨迹
 				handwriteCount = 0;
-				setCandidatesViewShown(false);
 				writeWord = "";
 				writeView.clear();
 
@@ -453,6 +455,85 @@ public class MainActivity extends InputMethodService implements
 							}
 						});
 					}
+					b = ((Button) keyBoardView[i].findViewById(R.id.function7));
+					if (b != null) {
+						b.setOnClickListener(new Button.OnClickListener() {
+
+							@Override
+							public void onClick(View v) {
+								// TODO Auto-generated method stub
+
+								getCurrentInputConnection().commitText(
+										writeWord + " ", 1);
+								writeWord = "";
+								handCandidateView.setSuggestions(null, true,
+										true);
+
+							}
+						});
+					}
+					// 刪除
+					b = ((Button) keyBoardView[i].findViewById(R.id.function1));
+					if (b != null) {
+						b.setOnClickListener(new Button.OnClickListener() {
+
+							@Override
+							public void onClick(View v) {
+								// TODO Auto-generated method stub
+								for (int i = 3; i >= 0; i--) {
+									if (!chineseAll[i].equals("")) {
+										chineseAll[i] = "";
+										if (i == 0) {
+											chineseCandidateView
+													.setSuggestions(null, true,
+															true);
+											setCandidatesViewShown(false);
+											return;
+										}
+										String q = chineseAll[0]
+												+ chineseAll[1] + chineseAll[2]
+												+ chineseAll[3];
+
+										if (!chineseSound.containsKey(q)) {
+											candidateList = new ArrayList<String>();
+										} else {
+											candidateList = (List<String>) (chineseSound
+													.get(q)).clone();
+										}
+										candidateList.add(0, q);
+										chineseCandidateView.setSuggestions(
+												candidateList, true, true);
+										setCandidatesViewShown(true);
+										return;
+									}
+								}
+
+								// mInputMethodManager.
+								// String s = getCurrentInputConnection()
+								// .getTextBeforeCursor(-1, 0).toString();
+								// if (s.length() > 0) {
+								// getCurrentInputConnection()
+								// .deleteSurroundingText(s.length(),
+								// s.length() - 1);
+								// }
+								String words = getCurrentInputConnection()
+										.getTextBeforeCursor(20, 0).toString();
+								if (words != null && words.length() > 0) {
+									getCurrentInputConnection()
+											.deleteSurroundingText(1, 0);
+								}
+
+								// getCurrentInputConnection().sendKeyEvent(
+								// new KeyEvent(KeyEvent.ACTION_DOWN,
+								// Keyboard.KEYCODE_DELETE));
+								// getCurrentInputConnection().sendKeyEvent(
+								// new KeyEvent(KeyEvent.ACTION_UP,
+								// Keyboard.KEYCODE_DELETE));
+
+							}
+						});
+					}
+
 				}
 			}
 		}
@@ -530,6 +611,21 @@ public class MainActivity extends InputMethodService implements
 		chineseCandidateView.setSuggestions(candidateList, true, true);
 		setCandidatesViewShown(true);
 
+	}
+
+	void deleteHandWord() {
+		if (writeWord.equals("")) {
+			String words = getCurrentInputConnection().getTextBeforeCursor(20,
+					0).toString();
+			if (words != null && words.length() > 0) {
+				getCurrentInputConnection().deleteSurroundingText(1, 0);
+			}
+		} else {
+			writeWord = "";
+			handCandidateView.setSuggestions(null, true, true);
+			handler.sendEmptyMessage(1);
+			getCurrentInputConnection().setComposingText("", 0);
+		}
 	}
 
 	void openHandCandidate(boolean flag, int count) {
