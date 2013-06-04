@@ -47,6 +47,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.InputType;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -75,16 +76,20 @@ public class MainActivity extends InputMethodService implements
 	private InputMethodManager mInputMethodManager;
 	static final boolean DEBUG = false;
 	static final boolean PROCESS_HARD_KEYS = true;
-
+	final String abcSmall = "abcdefghijklmnopqrstuvwxyz";
+	final String abcBig = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	static String testString = "";
 	final int initKeyboard = 1;
 
 	// 鍵盤
 	int nowKeyboard = initKeyboard;
-	View[] keyBoardView = new View[4];
+	int nowSymbol = -1;
+	View[] keyBoardView = new View[3];
+	View[] symbolView = new View[2];
 	WriteView writeView;
 	TextView typingView;
 	SelectKeyboardView selectKeyboardView;
+	boolean flagEnglishBig = false;
 
 	// 選字
 	// LinearLayout handCandidateLayout;
@@ -257,10 +262,12 @@ public class MainActivity extends InputMethodService implements
 				new LayoutParams(LayoutParams.MATCH_PARENT,
 						LayoutParams.MATCH_PARENT));
 		typingView = new TextView(this);
+		typingView.setBackgroundResource(R.drawable.swbk);
 		typingView.setTextSize(36);
 		typingView.setBackgroundColor(Color.WHITE);
 		typingView.setVisibility(View.GONE);
-		layout.addView(typingView);
+		typingView.setGravity(Gravity.CENTER);
+		layout.addView(typingView, new LayoutParams(140, 170));
 
 		selectKeyboardView = new SelectKeyboardView(this);
 		selectKeyboardView.setVisibility(View.GONE);
@@ -317,7 +324,7 @@ public class MainActivity extends InputMethodService implements
 			});
 		}
 
-		// 英文鍵盤
+		// 英文鍵盤---------------------------------
 		keyBoardView[2] = (View) getLayoutInflater().inflate(R.layout.english,
 				null);
 		for (int i = 1; i <= 26; i++) {
@@ -352,12 +359,42 @@ public class MainActivity extends InputMethodService implements
 							return false;
 						}
 					});
+			((Button) keyBoardView[2].findViewById(R.id.function9))
+					.setOnClickListener(new Button.OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							// TODO Auto-generated method stub
+							flagEnglishBig = !flagEnglishBig;
+							if (flagEnglishBig) {
+								for (int i = 1; i <= 26; i++) {
+									// Log.e("test", i + "");
+									int id = getResources().getIdentifier(
+											"english" + i, "id",
+											getPackageName());
+									((Button) keyBoardView[2].findViewById(id))
+											.setText(abcBig.substring(i - 1, i));
+								}
+								v.setBackgroundResource(R.drawable.e42);
+							} else {
+								for (int i = 1; i <= 26; i++) {
+									// Log.e("test", i + "");
+									int id = getResources().getIdentifier(
+											"english" + i, "id",
+											getPackageName());
+									((Button) keyBoardView[2].findViewById(id))
+											.setText(abcSmall.substring(i - 1,
+													i));
+								}
+								v.setBackgroundResource(R.drawable.e41);
+							}
+
+						}
+					});
+
 		}
 
-		// return keyBoardView[1];
-
 		// 共通按鈕---------------------------------------------------
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < 3; i++) {
 			if (keyBoardView[i] != null) {
 				// 切換鍵盤
 				Button b = ((Button) keyBoardView[i]
@@ -391,6 +428,17 @@ public class MainActivity extends InputMethodService implements
 								break;
 							}
 							return false;
+						}
+					});
+				}
+				// 符號鍵盤
+				b = ((Button) keyBoardView[i].findViewById(R.id.function2));
+				if (b != null) {
+					b.setOnClickListener(new Button.OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							// TODO Auto-generated method stub
+							setSymbolKeyboard(0);
 						}
 					});
 				}
@@ -442,7 +490,7 @@ public class MainActivity extends InputMethodService implements
 						}
 					});
 				}
-
+				// 聲音輸入
 				b = ((Button) keyBoardView[i].findViewById(R.id.function5));
 				if (b != null) {
 					b.setOnClickListener(new Button.OnClickListener() {
@@ -537,6 +585,208 @@ public class MainActivity extends InputMethodService implements
 			}
 		}
 
+		// 符號鍵盤---------------------------------
+		symbolView[0] = (View) getLayoutInflater().inflate(R.layout.symbol1,
+				null);
+		symbolView[1] = (View) getLayoutInflater().inflate(R.layout.symbol2,
+				null);
+		// 共通按鈕---------------------------------------------------
+		for (int i = 0; i < 2; i++) {
+			for (int j = 1; j <= 27; j++) {
+				int id = getResources().getIdentifier("symbol" + j, "id",
+						getPackageName());
+
+				((Button) symbolView[i].findViewById(id))
+						.setOnClickListener(new Button.OnClickListener() {
+							@Override
+							public void onClick(View v) {
+								// TODO Auto-generated method stub
+								typeEnglish(((Button) v).getText().toString());
+
+							}
+						});
+
+				((Button) symbolView[i].findViewById(id))
+						.setOnTouchListener(new Button.OnTouchListener() {
+
+							@Override
+							public boolean onTouch(View v, MotionEvent event) {
+								switch (event.getAction()) {
+								case MotionEvent.ACTION_DOWN:
+								case MotionEvent.ACTION_MOVE:
+									showTypingWord(((Button) v).getText()
+											.toString(), v.getX(),
+											((LinearLayout) v.getParent())
+													.getY());
+									break;
+								case MotionEvent.ACTION_UP:
+									hideTypingWord();
+									break;
+								}
+								return false;
+							}
+						});
+			}
+			Button b = ((Button) symbolView[i].findViewById(R.id.function3));
+			if (symbolView[i] != null) {
+				// 切換鍵盤
+				b = ((Button) symbolView[i].findViewById(R.id.function3));
+				if (b != null) {
+
+					b.setOnTouchListener(new Button.OnTouchListener() {
+
+						@Override
+						public boolean onTouch(View v, MotionEvent event) {
+							Log.e("touch", event.getX() + ":" + event.getY());
+							switch (event.getAction()) {
+							case MotionEvent.ACTION_DOWN:
+
+								showSelectKeyboard(
+										v.getX(),
+										((LinearLayout) v.getParent()).getY() - 160);
+								break;
+							case MotionEvent.ACTION_MOVE:
+								if (event.getY() < 0) {
+									int f = (int) ((event.getY() + 300) / 100);
+									if (f < 0) {
+										f = 0;
+									}
+									selectKeyboardView.setTarget(f);
+								}
+								break;
+							case MotionEvent.ACTION_UP:
+								hideSelectKeyboard();
+								setKeyboard(selectKeyboardView.getSelect());
+
+								break;
+							}
+							return false;
+						}
+					});
+				}
+				// 符號鍵盤
+				b = ((Button) symbolView[i].findViewById(R.id.function2));
+				if (b != null) {
+					b.setOnClickListener(new Button.OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							// TODO Auto-generated method stub
+							setKeyboard(selectKeyboardView.getSelect());
+						}
+					});
+				}
+				// 符號鍵盤
+				b = ((Button) symbolView[i].findViewById(R.id.function9));
+				if (b != null) {
+					b.setOnClickListener(new Button.OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							// TODO Auto-generated method stub
+
+							setSymbolKeyboard((nowSymbol + 1) % 2);
+						}
+					});
+				}
+				// 手繪
+				b = ((Button) symbolView[i].findViewById(R.id.function4));
+				if (b != null) {
+					b.setOnClickListener(new Button.OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							// TODO Auto-generated method stub
+							Intent i = new Intent(MainActivity.this,
+									DrawActivity.class);
+							i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+							startActivity(i);
+
+						}
+					});
+				}
+				// 聯想
+				b = ((Button) symbolView[i].findViewById(R.id.function6));
+				if (b != null) {
+					b.setOnClickListener(new Button.OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							// TODO Auto-generated method stub
+							Intent i = new Intent(MainActivity.this,
+									FindActivity.class);
+							i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+							startActivity(i);
+						}
+					});
+				}
+
+				// 空白
+
+				b = ((Button) symbolView[i].findViewById(R.id.function7));
+				if (b != null) {
+					b.setOnClickListener(new Button.OnClickListener() {
+
+						@Override
+						public void onClick(View v) {
+							// TODO Auto-generated method stub
+
+							getCurrentInputConnection().commitText(" ", 1);
+
+						}
+					});
+				}
+				// 聲音輸入
+				b = ((Button) symbolView[i].findViewById(R.id.function5));
+				if (b != null) {
+					b.setOnClickListener(new Button.OnClickListener() {
+
+						@Override
+						public void onClick(View v) {
+							// TODO Auto-generated method stub
+							Intent i = new Intent(MainActivity.this,
+									InputVoiceActivity.class);
+							i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+							startActivity(i);
+
+						}
+					});
+				}
+				// 刪除
+				b = ((Button) symbolView[i].findViewById(R.id.function1));
+				if (b != null) {
+					b.setOnClickListener(new Button.OnClickListener() {
+
+						@Override
+						public void onClick(View v) {
+							// TODO Auto-generated method stub
+
+							String words = getCurrentInputConnection()
+									.getTextBeforeCursor(20, 0).toString();
+							if (words != null && words.length() > 0) {
+								getCurrentInputConnection()
+										.deleteSurroundingText(1, 0);
+							}
+
+						}
+					});
+				}
+				// Enter
+				b = ((Button) symbolView[i].findViewById(R.id.function8));
+				if (b != null) {
+					b.setOnClickListener(new Button.OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							// TODO Auto-generated method stub
+							getCurrentInputConnection().sendKeyEvent(
+									new KeyEvent(KeyEvent.ACTION_DOWN,
+											KeyEvent.KEYCODE_ENTER));
+							getCurrentInputConnection().sendKeyEvent(
+									new KeyEvent(KeyEvent.ACTION_UP,
+											KeyEvent.KEYCODE_ENTER));
+						}
+					});
+				}
+
+			}
+		}
+
 		selectKeyboardView.setKeyboard(initKeyboard);
 		return keyBoardView[initKeyboard];
 	}
@@ -557,6 +807,13 @@ public class MainActivity extends InputMethodService implements
 		//
 		// }
 		nowKeyboard = num;
+	}
+
+	void setSymbolKeyboard(int num) {
+		setInputView(symbolView[num]);
+		setInputView(symbolView[num]);
+		setCandidatesViewShown(false);
+		nowSymbol = num;
 	}
 
 	void showTypingWord(String w, float x, float y) {
