@@ -27,8 +27,10 @@ import xBaseJ.xBaseJException;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.app.SearchManager;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -40,80 +42,65 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class FindActivity extends Activity {
+	String[] testString = { "西瓜", "鳳梨", "番茄", "荔枝", "香蕉", "芭樂", "水梨" };
+	// int cnt = 0;
 
 	Handler handler = new Handler() {
 		@Override
 		public void handleMessage(Message m) {
 			switch (m.what) {
 			case 0:
-				flagQuerying = false;
-				progress.dismiss();
-				// for (int i = 0; i < 4; i++) {
-				// if (names[i].equals("")) {
-				// nameViews[i].setText(null);
-				// imageButtons[i].setImageBitmap(null);
-				// continue;
-				// }
-				// nameViews[i].setText(names[i]);
-				// imageButtons[i].setImageBitmap(images[i]);
-				//
-				// }
+				for (int i = 0; i < 3; i++) {
+					linear[i].removeAllViews();
+				}
+				int l = 24;
+				if (l > showingEdges.size()) {
+					l = showingEdges.size();
+				}
 
-				// if (nameList == null) {
-				// nameList = new ArrayList<String>();
-				// for (int i = 0; i < queryData.tagList.size(); i++) {
-				// nameList.add(queryData.tagList.get(i).name);
-				// }
-				// } else {
-				// for (int i = nameList.size() - 1; i >= 0; i--) {
-				// boolean flagJoin = false;
-				// String a = nameList.get(i);
-				// for (int j = 0; j < queryData.tagList.size(); j++) {
-				//
-				// String b = queryData.tagList.get(j).name;
-				//
-				// if (a.equals(b)) {
-				// flagJoin = true;
-				// break;
-				// }
-				//
-				// }
-				//
-				// if (!flagJoin) {
-				// nameList.remove(i);
-				// }
-				// }
-				// }
-				// // ArrayAdapter adapter = new ArrayAdapter(FindActivity.this,
-				// // android.R.layout.simple_list_item_1, nameList);
-				// // listView.setAdapter(adapter);
+				int i;
+				boolean flag = false;
+				for (i = 0; i < l; i++) {
+					if (showingEdges.get(i).cnt < tags.size()) {
+						flag = true;
+						break;
+					}
+					linear[i % 3].addView(new FindTagView(FindActivity.this,
+							showingEdges.get(i).name));
+				}
+				if (flag) {
+
+					linear[i % 3].addView(new FindTagView(FindActivity.this));
+
+					for (; i < l - 1; i++) {
+						linear[(i + 1) % 3].addView(new FindTagView(
+								FindActivity.this, showingEdges.get(i).name));
+
+					}
+				}
+				progress.dismiss();
+
 				break;
 
 			}
 		}
 	};
-	// ListView listView;
 	ArrayList<TagEdge> showingEdges;
-	// ArrayList<DataSet> allData;
+	ArrayList<TagView> tags = new ArrayList<TagView>();
 	InputMethodManager imm;
-	// ImageButton imageButtons[] = new ImageButton[4];
-	// Bitmap images[] = new Bitmap[4];
-	// TextView nameViews[] = new TextView[4];
-	// String names[] = new String[4];
 
-	TextView textView;
-
-	boolean flagQuerying = false;
 	String queryTag;
 	DataSet queryData;
-	int dataCnt = 0;
 
 	ProgressDialog progress;
 	EditText editText;
+	LinearLayout[] linear = new LinearLayout[3];
+	LinearLayout tagLinear;
 	private static final int VOICE_RECOGNITION_REQUEST_CODE = 1234;
 
 	@Override
@@ -121,23 +108,7 @@ public class FindActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.finding);
 
-		// listView = (ListView) findViewById(R.id.listView1);
-		//
-		// listView.setOnItemClickListener(new ListView.OnItemClickListener() {
-		//
-		// @Override
-		// public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
-		// long arg3) {
-		// // TODO Auto-generated method stub
-		// Intent i = new Intent(FindActivity.this, ShowTagActivity.class);
-		// i.putExtra("tag", nameList.get(arg2));
-		// startActivity(i);
-		// finish();
-		//
-		// }
-		// });
 		imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-		textView = (TextView) findViewById(R.id.textView1);
 		editText = (EditText) findViewById(R.id.editText1);
 		editText.setText("");
 		progress = new ProgressDialog(this);
@@ -150,18 +121,30 @@ public class FindActivity extends Activity {
 					@Override
 					public void onClick(View v) {
 
-						if (flagQuerying || editText.getText().toString().equals("")) {
+						if (editText.getText().toString().equals("")) {
 							return;
+						}
+
+						for (int i = 0; i < 3; i++) {
+							linear[i].removeAllViews();
 						}
 						imm.hideSoftInputFromWindow(editText.getWindowToken(),
 								0);
 						String s = editText.getText().toString();
-						textView.setText(textView.getText() + s + " ");
 						progress.show();
-						query(s);
-						editText.setText("");
-						dataCnt++;
 
+						TagView t;
+						if (tags.size() == 0) {
+							t = new TagView(FindActivity.this, s, true);
+						} else {
+							t = new TagView(FindActivity.this, s, false);
+						}
+						tags.add(t);
+						tagLinear.addView(tags.get(tags.size() - 1));
+
+						editText.setText("");
+
+						query(s);
 					}
 				});
 
@@ -173,10 +156,15 @@ public class FindActivity extends Activity {
 					public void onClick(View v) {
 						showingEdges = null;
 						// listView.setAdapter(null);
-						textView.setText(" ");
-						dataCnt = 0;
+
 						queryData = null;
 						editText.setText("");
+
+						for (int i = 0; i < 3; i++) {
+							linear[i].removeAllViews();
+						}
+						tags.clear();
+						tagLinear.removeAllViews();
 						//
 						// for (int i = 0; i < 4; i++) {
 						//
@@ -186,11 +174,14 @@ public class FindActivity extends Activity {
 						// }
 					}
 				});
+		linear[0] = (LinearLayout) findViewById(R.id.linear1);
+		linear[1] = (LinearLayout) findViewById(R.id.linear2);
+		linear[2] = (LinearLayout) findViewById(R.id.linear3);
+		tagLinear = (LinearLayout) findViewById(R.id.taglinear);
 
 	}
 
 	void query(String tag) {
-		flagQuerying = true;
 		queryTag = tag;
 
 		new Thread(new Runnable() {
@@ -199,8 +190,10 @@ public class FindActivity extends Activity {
 			public void run() {
 				// TODO Auto-generated method stub
 				// query
+
 				try {
 					String tag = queryTag;
+
 					queryTag = URLEncoder.encode(queryTag, "UTF-8");
 
 					String ss = GetDataFromURL
@@ -220,137 +213,114 @@ public class FindActivity extends Activity {
 					e1.printStackTrace();
 				}
 
-				// 取交集
-				if (showingEdges == null) {
-					showingEdges = new ArrayList<TagEdge>();
-					showingEdges = (ArrayList<TagEdge>) (queryData.edgeList)
-							.clone();
-					// for (int i = 0; i < queryData.edgeList.size(); i++) {
-					// showingEdges.add(queryData.edgeList.get(i));
-					// }
-				} else {
-					// float ms1 = 1, ms2 = 1;
-					// if (showingEdges.size() > 0
-					// && queryData.edgeList.size() > 0) {
-					// ms1 = showingEdges.get(0).score;
-					// ms2 = queryData.edgeList.get(0).score;
-					//
-					// }
-					for (int i = showingEdges.size() - 1; i >= 0; i--) {
-						boolean flagJoin = false;
-						String a = showingEdges.get(i).name;
-						for (int j = 0; j < queryData.edgeList.size(); j++) {
-
-							String b = queryData.edgeList.get(j).name;
-
-							if (a.equals(b)) {
-								flagJoin = true;
-
-								Log.e("tag", showingEdges.get(i).name + ":"
-										+ showingEdges.get(i).score + " "
-										+ queryData.edgeList.get(j).score);
-
-								if (showingEdges.get(i).score < queryData.edgeList
-										.get(j).score) {
-									showingEdges.get(i).score = showingEdges
-											.get(i).score;
-								} else {
-									showingEdges.get(i).score = queryData.edgeList
-											.get(j).score;
-								}
-
-								break;
-							}
-
-						}
-
-						if (!flagJoin) {
-							showingEdges.remove(i);
-						}
-					}
-				}
-				Collections.sort(showingEdges, new Comparator<TagEdge>() {
-
-					@Override
-					public int compare(TagEdge lhs, TagEdge rhs) {
-						// TODO Auto-generated method stub
-						return (int) (rhs.score - lhs.score);
-					}
-
-				});
-				Log.e("tag", "交集");
-				for (TagEdge e : showingEdges) {
-					Log.e("tag", e.name + ":" + e.score);
-				}
-				// // 取文字
-				// for (int i = 0; i < 4; i++) {
-				// if (i < showingEdges.size()) {
-				// names[i] = showingEdges.get(i).name;
+				tags.get(tags.size() - 1).edges = (ArrayList<TagEdge>) (queryData.edgeList)
+						.clone();
+				reQuery();
+				// // 取交集
+				// if (showingEdges == null) {
+				// showingEdges = new ArrayList<TagEdge>();
+				// showingEdges = (ArrayList<TagEdge>) (queryData.edgeList)
+				// .clone();
+				// // for (int i = 0; i < queryData.edgeList.size(); i++) {
+				// // showingEdges.add(queryData.edgeList.get(i));
+				// // }
 				// } else {
-				// names[i] = "";
-				// }
+				// // float ms1 = 1, ms2 = 1;
+				// // if (showingEdges.size() > 0
+				// // && queryData.edgeList.size() > 0) {
+				// // ms1 = showingEdges.get(0).score;
+				// // ms2 = queryData.edgeList.get(0).score;
+				// //
+				// // }
+				// for (int i = showingEdges.size() - 1; i >= 0; i--) {
+				// boolean flagJoin = false;
+				// String a = showingEdges.get(i).name;
+				// for (int j = 0; j < queryData.edgeList.size(); j++) {
+				//
+				// String b = queryData.edgeList.get(j).name;
+				//
+				// if (a.equals(b)) {
+				// flagJoin = true;
+				//
+				// if (showingEdges.get(i).score < queryData.edgeList
+				// .get(j).score) {
+				// showingEdges.get(i).score = showingEdges
+				// .get(i).score;
+				// } else {
+				// showingEdges.get(i).score = queryData.edgeList
+				// .get(j).score;
 				// }
 				//
-				// // 找圖片
-				// for (int i = 0; i < 4; i++) {
-				// if (names[i].equals("")) {
 				// break;
 				// }
-				// URL url;
-				// Bitmap b = null;
-				// try {
-				// // String s2 = textView.getText().toString();
-				// // s2 = s2.substring(0, s2.length() - 1);
-				// String s = URLEncoder.encode(names[i], "UTF-8");
-				// // Log.e("search",
-				// // "https://ajax.googleapis.com/ajax/services/search/images?"
-				// // + "v=1.0&q=" + s + "&rsz=1&hl=zh-TW");
-				// url = new URL(
-				// "https://ajax.googleapis.com/ajax/services/search/images?"
-				// + "v=1.0&q=" + s + "&rsz=1&hl=zh-TW");
-				// URLConnection connection = url.openConnection();
-				// connection.addRequestProperty("Referer",
-				// "http://technotalkative.com");
 				//
-				// String line;
-				// StringBuilder builder = new StringBuilder();
-				// BufferedReader reader = new BufferedReader(
-				// new InputStreamReader(connection
-				// .getInputStream()));
-				// while ((line = reader.readLine()) != null) {
-				// builder.append(line);
 				// }
 				//
-				// JSONObject json = new JSONObject(builder.toString());
-				// JSONObject responseObject = json
-				// .getJSONObject("responseData");
-				// JSONArray resultArray = responseObject
-				// .getJSONArray("results");
-				// if (resultArray.length() > 0) {
-				// JSONObject image = resultArray.getJSONObject(0);
-				// // Log.e("json", image.getString("tbUrl"));
-				// b = GetDataFromURL.getBitmapFromURL(image
-				// .getString("tbUrl"));
+				// if (!flagJoin) {
+				// showingEdges.remove(i);
 				// }
-				// images[i] = b;
-				// } catch (MalformedURLException e) {
-				// // TODO Auto-generated catch block
-				// e.printStackTrace();
-				// } catch (IOException e) {
-				// // TODO Auto-generated catch block
-				// e.printStackTrace();
-				// } catch (JSONException e) {
-				// // TODO Auto-generated catch block
-				// e.printStackTrace();
 				// }
+				// }
+				// Collections.sort(showingEdges, new Comparator<TagEdge>() {
+				//
+				// @Override
+				// public int compare(TagEdge lhs, TagEdge rhs) {
+				// // TODO Auto-generated method stub
+				// return (int) (rhs.score - lhs.score);
+				// }
+				//
+				// });
+				// Log.e("tag", "交集");
+				// for (TagEdge e : showingEdges) {
+				// Log.e("tag", e.name + ":" + e.score);
 				// }
 
 				// UI
-				handler.sendEmptyMessage(0);
-				flagQuerying = false;
+				// handler.sendEmptyMessage(0);
 
 			}
 		}).start();
+	}
+
+	void reQuery() {
+
+		// 取出現次數
+		showingEdges = new ArrayList<TagEdge>();
+		for (TagView t : tags) {
+			ArrayList<TagEdge> edges = t.edges;
+			for (TagEdge e : edges) {
+				boolean flag = false;
+				for (TagEdge r : showingEdges) {
+					if (r.name.equals(e.name)) {
+						r.cntadd();
+						flag = true;
+					}
+				}
+				if (!flag) {
+					showingEdges.add(e.clone());
+				}
+			}
+
+		}
+		// 排序
+		Collections.sort(showingEdges, new Comparator<TagEdge>() {
+
+			@Override
+			public int compare(TagEdge lhs, TagEdge rhs) {
+				// TODO Auto-generated method stub
+				if (rhs.cnt != lhs.cnt) {
+					return rhs.cnt - lhs.cnt;
+				}
+				return (int) (rhs.score - lhs.score);
+			}
+
+		});
+
+		for (TagEdge e : showingEdges) {
+
+			Log.e("tag", e.name + ":" + e.score + "," + e.cnt);
+		}
+		handler.sendEmptyMessage(0);
 	}
 
 	private void startVoiceRecognitionActivity() {
@@ -382,4 +352,31 @@ public class FindActivity extends Activity {
 		super.onActivityResult(requestCode, resultCode, data);
 	}
 
+	void removeTag(TagView l) {
+		// for (TagEdge e : l.edges) {
+		// Log.e("tag", e.name);
+		// }
+		tags.remove(l);
+		tagLinear.removeView(l);
+		if (tagLinear.getChildCount() > 0) {
+			((TagView) tagLinear.getChildAt(0)).setFirst();
+		}
+		reQuery();
+	}
+
+	void selectTag(String s) {
+		MainActivity.testString = s;
+		finish();
+	}
+
+	void googleSearch() {
+		String s = "";
+		for (TagView v : tags) {
+			s += v.name + " ";
+		}
+		Intent i = new Intent(Intent.ACTION_WEB_SEARCH);
+		i.putExtra(SearchManager.QUERY, s);
+		startActivity(i);
+		finish();
+	}
 }

@@ -4,9 +4,23 @@ public class TagEdge {
 	String name;
 	float score;
 	String rel;
-	TagEdge(String n, float w,String r) {
+	int cnt;
+
+	TagEdge(String n, float w, String r) {
 		name = n;
 		score = w;
-		rel=r;
+		rel = r;
+		cnt = 1;
+	}
+
+	void cntadd() {
+		cnt++;
+	}
+
+	@Override
+	protected	TagEdge clone() {
+		TagEdge r = new TagEdge(name, score, rel);
+		r.cnt = cnt;
+		return r;
 	}
 }
