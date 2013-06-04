@@ -404,139 +404,135 @@ public class MainActivity extends InputMethodService implements
 
 						}
 					});
+				}
+				// 聯想
+				b = ((Button) keyBoardView[i].findViewById(R.id.function6));
+				if (b != null) {
+					b.setOnClickListener(new Button.OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							// TODO Auto-generated method stub
+							Intent i = new Intent(MainActivity.this,
+									FindActivity.class);
+							i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+							startActivity(i);
+						}
+					});
+				}
 
-					// 聯想
-					b = ((Button) keyBoardView[i].findViewById(R.id.function6));
-					if (b != null) {
-						b.setOnClickListener(new Button.OnClickListener() {
-							@Override
-							public void onClick(View v) {
-								// TODO Auto-generated method stub
-								Intent i = new Intent(MainActivity.this,
-										FindActivity.class);
-								i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-								startActivity(i);
-							}
-						});
-					}
+				// 空白
 
-					// 空白
+				b = ((Button) keyBoardView[i].findViewById(R.id.function7));
+				if (b != null) {
+					b.setOnClickListener(new Button.OnClickListener() {
 
-					b = ((Button) keyBoardView[i].findViewById(R.id.function7));
-					if (b != null) {
-						b.setOnClickListener(new Button.OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							// TODO Auto-generated method stub
 
-							@Override
-							public void onClick(View v) {
-								// TODO Auto-generated method stub
+							getCurrentInputConnection().commitText(
+									writeWord + " ", 1);
+							writeWord = "";
+							handCandidateView.setSuggestions(null, true, true);
 
-								getCurrentInputConnection().commitText(
-										writeWord + " ", 1);
-								writeWord = "";
-								handCandidateView.setSuggestions(null, true,
-										true);
+						}
+					});
+				}
 
-							}
-						});
-					}
+				b = ((Button) keyBoardView[i].findViewById(R.id.function5));
+				if (b != null) {
+					b.setOnClickListener(new Button.OnClickListener() {
 
-					b = ((Button) keyBoardView[i].findViewById(R.id.function5));
-					if (b != null) {
-						b.setOnClickListener(new Button.OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							// TODO Auto-generated method stub
+							Intent i = new Intent(MainActivity.this,
+									InputVoiceActivity.class);
+							i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+							startActivity(i);
 
-							@Override
-							public void onClick(View v) {
-								// TODO Auto-generated method stub
-								Intent i = new Intent(MainActivity.this,
-										InputVoiceActivity.class);
-								i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-								startActivity(i);
+						}
+					});
+				}
+				// 刪除
+				b = ((Button) keyBoardView[i].findViewById(R.id.function1));
+				if (b != null) {
+					b.setOnClickListener(new Button.OnClickListener() {
 
-							}
-						});
-					}
-					b = ((Button) keyBoardView[i].findViewById(R.id.function7));
-					if (b != null) {
-						b.setOnClickListener(new Button.OnClickListener() {
-
-							@Override
-							public void onClick(View v) {
-								// TODO Auto-generated method stub
-
-								getCurrentInputConnection().commitText(
-										writeWord + " ", 1);
-								writeWord = "";
-								handCandidateView.setSuggestions(null, true,
-										true);
-
-							}
-						});
-					}
-					// 刪除
-					b = ((Button) keyBoardView[i].findViewById(R.id.function1));
-					if (b != null) {
-						b.setOnClickListener(new Button.OnClickListener() {
-
-							@Override
-							public void onClick(View v) {
-								// TODO Auto-generated method stub
-								for (int i = 3; i >= 0; i--) {
-									if (!chineseAll[i].equals("")) {
-										chineseAll[i] = "";
-										if (i == 0) {
-											chineseCandidateView
-													.setSuggestions(null, true,
-															true);
-											setCandidatesViewShown(false);
-											return;
-										}
-										String q = chineseAll[0]
-												+ chineseAll[1] + chineseAll[2]
-												+ chineseAll[3];
-
-										if (!chineseSound.containsKey(q)) {
-											candidateList = new ArrayList<String>();
-										} else {
-											candidateList = (List<String>) (chineseSound
-													.get(q)).clone();
-										}
-										candidateList.add(0, q);
+						@Override
+						public void onClick(View v) {
+							// TODO Auto-generated method stub
+							for (int i = 3; i >= 0; i--) {
+								if (!chineseAll[i].equals("")) {
+									chineseAll[i] = "";
+									if (i == 0) {
 										chineseCandidateView.setSuggestions(
-												candidateList, true, true);
-										setCandidatesViewShown(true);
+												null, true, true);
+										setCandidatesViewShown(false);
 										return;
 									}
+									String q = chineseAll[0] + chineseAll[1]
+											+ chineseAll[2] + chineseAll[3];
+
+									if (!chineseSound.containsKey(q)) {
+										candidateList = new ArrayList<String>();
+									} else {
+										candidateList = (List<String>) (chineseSound
+												.get(q)).clone();
+									}
+									candidateList.add(0, q);
+									chineseCandidateView.setSuggestions(
+											candidateList, true, true);
+									setCandidatesViewShown(true);
+									return;
 								}
-
-								// mInputMethodManager.
-								// String s = getCurrentInputConnection()
-								// .getTextBeforeCursor(-1, 0).toString();
-								// if (s.length() > 0) {
-								// getCurrentInputConnection()
-								// .deleteSurroundingText(s.length(),
-								// s.length() - 1);
-								// }
-								String words = getCurrentInputConnection()
-										.getTextBeforeCursor(20, 0).toString();
-								if (words != null && words.length() > 0) {
-									getCurrentInputConnection()
-											.deleteSurroundingText(1, 0);
-								}
-
-								// getCurrentInputConnection().sendKeyEvent(
-								// new KeyEvent(KeyEvent.ACTION_DOWN,
-								// Keyboard.KEYCODE_DELETE));
-								// getCurrentInputConnection().sendKeyEvent(
-								// new KeyEvent(KeyEvent.ACTION_UP,
-								// Keyboard.KEYCODE_DELETE));
-
 							}
-						});
-					}
 
+							// mInputMethodManager.
+							// String s = getCurrentInputConnection()
+							// .getTextBeforeCursor(-1, 0).toString();
+							// if (s.length() > 0) {
+							// getCurrentInputConnection()
+							// .deleteSurroundingText(s.length(),
+							// s.length() - 1);
+							// }
+							String words = getCurrentInputConnection()
+									.getTextBeforeCursor(20, 0).toString();
+							if (words != null && words.length() > 0) {
+								getCurrentInputConnection()
+										.deleteSurroundingText(1, 0);
+							}
+
+							// getCurrentInputConnection().sendKeyEvent(
+							// new KeyEvent(KeyEvent.ACTION_DOWN,
+							// Keyboard.KEYCODE_DELETE));
+							// getCurrentInputConnection().sendKeyEvent(
+							// new KeyEvent(KeyEvent.ACTION_UP,
+							// Keyboard.KEYCODE_DELETE));
+
+						}
+					});
 				}
+				// Enter
+				b = ((Button) keyBoardView[i].findViewById(R.id.function8));
+				if (b != null) {
+					b.setOnClickListener(new Button.OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							// TODO Auto-generated method stub
+							getCurrentInputConnection().sendKeyEvent(
+									new KeyEvent(KeyEvent.ACTION_DOWN,
+											KeyEvent.KEYCODE_ENTER));
+							getCurrentInputConnection().sendKeyEvent(
+									new KeyEvent(KeyEvent.ACTION_UP,
+											KeyEvent.KEYCODE_ENTER));
+						}
+					});
+				}
+
 			}
 		}
+
 		selectKeyboardView.setKeyboard(initKeyboard);
 		return keyBoardView[initKeyboard];
 	}
