@@ -212,6 +212,8 @@ public final class R {
         public static final int handwrite=0x7f030004;
         public static final int mainactivity=0x7f030005;
         public static final int showtag=0x7f030006;
+        public static final int symbol1=0x7f030007;
+        public static final int symbol2=0x7f030008;
     }
     public static final class string {
         public static final int app_name=0x7f070000;
