@@ -249,7 +249,7 @@ public class MainActivity extends InputMethodService implements
 
 		selectKeyboardView = new SelectKeyboardView(this);
 		selectKeyboardView.setVisibility(View.GONE);
-		layout.addView(selectKeyboardView);
+		layout.addView(selectKeyboardView,new LayoutParams(135,300));
 		// 手寫輸入---------------------------------
 		keyBoardView[0] = (View) getLayoutInflater().inflate(
 				R.layout.handwrite, null);
@@ -360,7 +360,7 @@ public class MainActivity extends InputMethodService implements
 								selectKeyboardView.nextKeyboard();
 								showSelectKeyboard(
 										v.getX(),
-										((LinearLayout) v.getParent()).getY() - 300);
+										((LinearLayout) v.getParent()).getY() - 160);
 								break;
 							case MotionEvent.ACTION_MOVE:
 								if (event.getY() < 0) {
@@ -775,22 +775,24 @@ public class MainActivity extends InputMethodService implements
 	@Override
 	public void onFinishInput() {
 		super.onFinishInput();
+		if (handCandidateView != null) {
+			handCandidateView.setSuggestions(null, true, true);
+			str = 0;
 
-		handCandidateView.setSuggestions(null, true, true);
-		str = 0;
-
-		characterClear(character);
-		strokes = 0;
-		mPath.reset();// 触摸结束即清除轨迹
-		handwriteCount = 0;
-		writeWord = "";
-		writeView.clear();
-
-		for (int i = 0; i < 4; i++) {
-			chineseAll[i] = "";
+			characterClear(character);
+			strokes = 0;
+			mPath.reset();// 触摸结束即清除轨迹
+			handwriteCount = 0;
+			writeWord = "";
+			writeView.clear();
 		}
-		chineseCandidateView.setSuggestions(null, true, true);
-		setCandidatesViewShown(false);
+		if (chineseCandidateView != null) {
+			for (int i = 0; i < 4; i++) {
+				chineseAll[i] = "";
+			}
+			chineseCandidateView.setSuggestions(null, true, true);
+			setCandidatesViewShown(false);
+		}
 		Log.e("IME", "onFinish");
 	}
 
