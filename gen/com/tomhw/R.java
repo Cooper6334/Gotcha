@@ -202,6 +202,30 @@ public final class R {
         public static final int linearLayout2=0x7f09005a;
         public static final int relative=0x7f090059;
         public static final int surfaceView1=0x7f090031;
+        public static final int symbol1=0x7f09005d;
+        public static final int symbol10=0x7f09006c;
+        public static final int symbol11=0x7f09006d;
+        public static final int symbol12=0x7f09006e;
+        public static final int symbol13=0x7f090074;
+        public static final int symbol14=0x7f090073;
+        public static final int symbol15=0x7f090065;
+        public static final int symbol16=0x7f090066;
+        public static final int symbol18=0x7f090060;
+        public static final int symbol19=0x7f090067;
+        public static final int symbol2=0x7f09005e;
+        public static final int symbol20=0x7f090061;
+        public static final int symbol21=0x7f090063;
+        public static final int symbol22=0x7f090072;
+        public static final int symbol24=0x7f090070;
+        public static final int symbol25=0x7f090062;
+        public static final int symbol26=0x7f09006f;
+        public static final int symbol3=0x7f090071;
+        public static final int symbol4=0x7f090068;
+        public static final int symbol5=0x7f09005f;
+        public static final int symbol6=0x7f090069;
+        public static final int symbol7=0x7f09006a;
+        public static final int symbol8=0x7f09006b;
+        public static final int symbol9=0x7f090064;
         public static final int textView1=0x7f090058;
     }
     public static final class layout {

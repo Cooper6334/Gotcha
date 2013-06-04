@@ -8,16 +8,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
 
-        <Button
-            android:id="@+id/english17"
+        <Button 
+            android:id="@+id/symbol1"
             android:layout_width="108px"
             android:layout_height="195px"
             android:background="@drawable/e1"
-            android:text="q"
+            android:text="1"
             android:textColor="@color/ctcolor" />
 
         <Button
-            android:id="@+id/english23"
+            android:id="@+id/symbol2"
             android:layout_width="108px"
             android:layout_height="195px"
             android:background="@drawable/e1"
@@ -25,7 +25,7 @@
             android:textColor="@color/ctcolor" />
 
         <Button
-            android:id="@+id/english5"
+            android:id="@+id/symbol5"
             android:layout_width="108px"
             android:layout_height="195px"
             android:background="@drawable/e1"
@@ -33,7 +33,7 @@
             android:textColor="@color/ctcolor" />
 
         <Button
-            android:id="@+id/english18"
+            android:id="@+id/symbol18"
             android:layout_width="108px"
             android:layout_height="195px"
             android:background="@drawable/e1"
@@ -41,7 +41,7 @@
             android:textColor="@color/ctcolor" />
 
         <Button
-            android:id="@+id/english20"
+            android:id="@+id/symbol20"
             android:layout_width="108px"
             android:layout_height="195px"
             android:background="@drawable/e1"
@@ -49,7 +49,7 @@
             android:textColor="@color/ctcolor" />
 
         <Button
-            android:id="@+id/english25"
+            android:id="@+id/symbol25"
             android:layout_width="108px"
             android:layout_height="195px"
             android:background="@drawable/e1"
@@ -57,7 +57,7 @@
             android:textColor="@color/ctcolor" />
 
         <Button
-            android:id="@+id/english21"
+            android:id="@+id/symbol21"
             android:layout_width="108px"
             android:layout_height="195px"
             android:background="@drawable/e1"
@@ -65,7 +65,7 @@
             android:textColor="@color/ctcolor" />
 
         <Button
-            android:id="@+id/english9"
+            android:id="@+id/symbol9"
             android:layout_width="108px"
             android:layout_height="195px"
             android:background="@drawable/e1"
@@ -73,7 +73,7 @@
             android:textColor="@color/ctcolor" />
 
         <Button
-            android:id="@+id/english15"
+            android:id="@+id/symbol15"
             android:layout_width="108px"
             android:layout_height="195px"
             android:background="@drawable/e1"
@@ -81,7 +81,7 @@
             android:textColor="@color/ctcolor" />
 
         <Button
-            android:id="@+id/english16"
+            android:id="@+id/symbol16"
             android:layout_width="108px"
             android:layout_height="195px"
             android:background="@drawable/e1"
@@ -101,7 +101,7 @@
             android:textColor="@color/ctcolor" />
 
         <Button
-            android:id="@+id/english1"
+            android:id="@+id/symbol1"
             android:layout_width="108px"
             android:layout_height="195px"
             android:background="@drawable/e1"
@@ -109,7 +109,7 @@
             android:textColor="@color/ctcolor" />
 
         <Button
-            android:id="@+id/english19"
+            android:id="@+id/symbol19"
             android:layout_width="108px"
             android:layout_height="195px"
             android:background="@drawable/e1"
@@ -117,7 +117,7 @@
             android:textColor="@color/ctcolor" />
 
         <Button
-            android:id="@+id/english4"
+            android:id="@+id/symbol4"
             android:layout_width="108px"
             android:layout_height="195px"
             android:background="@drawable/e1"
@@ -125,7 +125,7 @@
             android:textColor="@color/ctcolor" />
 
         <Button
-            android:id="@+id/english6"
+            android:id="@+id/symbol6"
             android:layout_width="108px"
             android:layout_height="195px"
             android:background="@drawable/e1"
@@ -133,7 +133,7 @@
             android:textColor="@color/ctcolor" />
 
         <Button
-            android:id="@+id/english7"
+            android:id="@+id/symbol7"
             android:layout_width="108px"
             android:layout_height="195px"
             android:background="@drawable/e1"
@@ -141,7 +141,7 @@
             android:textColor="@color/ctcolor" />
 
         <Button
-            android:id="@+id/english8"
+            android:id="@+id/symbol8"
             android:layout_width="108px"
             android:layout_height="195px"
             android:background="@drawable/e1"
@@ -149,7 +149,7 @@
             android:textColor="@color/ctcolor" />
 
         <Button
-            android:id="@+id/english10"
+            android:id="@+id/symbol10"
             android:layout_width="108px"
             android:layout_height="195px"
             android:background="@drawable/e1"
@@ -157,7 +157,7 @@
             android:textColor="@color/ctcolor" />
 
         <Button
-            android:id="@+id/english11"
+            android:id="@+id/symbol11"
             android:layout_width="108px"
             android:layout_height="195px"
             android:background="@drawable/e1"
@@ -165,7 +165,7 @@
             android:textColor="@color/ctcolor" />
 
         <Button
-            android:id="@+id/english12"
+            android:id="@+id/symbol12"
             android:layout_width="108px"
             android:layout_height="195px"
             android:background="@drawable/e1"
@@ -192,7 +192,7 @@
             android:textColor="@color/ctcolor" />
 
         <Button
-            android:id="@+id/english26"
+            android:id="@+id/symbol26"
             android:layout_width="120px"
             android:layout_height="194px"
             android:background="@drawable/e2"
@@ -200,7 +200,7 @@
             android:textColor="@color/ctcolor" />
 
         <Button
-            android:id="@+id/english24"
+            android:id="@+id/symbol24"
             android:layout_width="120px"
             android:layout_height="194px"
             android:background="@drawable/e2"
@@ -208,7 +208,7 @@
             android:textColor="@color/ctcolor" />
 
         <Button
-            android:id="@+id/english3"
+            android:id="@+id/symbol3"
             android:layout_width="120px"
             android:layout_height="194px"
             android:background="@drawable/e2"
@@ -216,7 +216,7 @@
             android:textColor="@color/ctcolor" />
 
         <Button
-            android:id="@+id/english22"
+            android:id="@+id/symbol22"
             android:layout_width="120px"
             android:layout_height="194px"
             android:background="@drawable/e2"
@@ -224,7 +224,7 @@
             android:textColor="@color/ctcolor" />
 
         <Button
-            android:id="@+id/english2"
+            android:id="@+id/symbol2"
             android:layout_width="120px"
             android:layout_height="194px"
             android:background="@drawable/e2"
@@ -232,7 +232,7 @@
             android:textColor="@color/ctcolor" />
 
         <Button
-            android:id="@+id/english14"
+            android:id="@+id/symbol14"
             android:layout_width="120px"
             android:layout_height="194px"
             android:background="@drawable/e2"
@@ -240,7 +240,7 @@
             android:textColor="@color/ctcolor" />
 
         <Button
-            android:id="@+id/english13"
+            android:id="@+id/symbol13"
             android:layout_width="120px"
             android:layout_height="194px"
             android:background="@drawable/e2"
