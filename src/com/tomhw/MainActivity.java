@@ -29,6 +29,8 @@ import xBaseJ.xBaseJException;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -131,6 +133,12 @@ public class MainActivity extends InputMethodService implements
 				writeWord = "";
 				writeView.clear();
 
+				break;
+
+			case 3:
+				if (!writeView.clear()) {
+					sendEmptyMessageDelayed(3, 100);
+				}
 				break;
 			}
 		}
@@ -249,13 +257,13 @@ public class MainActivity extends InputMethodService implements
 
 		selectKeyboardView = new SelectKeyboardView(this);
 		selectKeyboardView.setVisibility(View.GONE);
-		layout.addView(selectKeyboardView,new LayoutParams(135,300));
+		layout.addView(selectKeyboardView, new LayoutParams(135, 300));
 		// 手寫輸入---------------------------------
 		keyBoardView[0] = (View) getLayoutInflater().inflate(
 				R.layout.handwrite, null);
 		writeView = new WriteView(this);
 		writeView.setId(123);
-
+		handler.sendEmptyMessage(3);
 		((LinearLayout) keyBoardView[0].findViewById(R.id.linearLayout2))
 				.addView(writeView);
 
@@ -373,7 +381,7 @@ public class MainActivity extends InputMethodService implements
 								break;
 							case MotionEvent.ACTION_UP:
 								hideSelectKeyboard();
-								setKeyboard(selectKeyboardView.selectKeyboard);
+								setKeyboard(selectKeyboardView.getSelect());
 								break;
 							}
 							return false;
@@ -448,12 +456,7 @@ public class MainActivity extends InputMethodService implements
 				}
 			}
 		}
-		selectKeyboardView.selectKeyboard = initKeyboard;
-		if (initKeyboard != 1) {
-			setCandidatesViewShown(false);
-		} else {
-			setCandidatesViewShown(true);
-		}
+		selectKeyboardView.setKeyboard(initKeyboard);
 		return keyBoardView[initKeyboard];
 	}
 
@@ -461,6 +464,9 @@ public class MainActivity extends InputMethodService implements
 	// 0手寫1注音2英文3符號
 	void setKeyboard(int num) {
 		setInputView(keyBoardView[num]);
+		if (num == 0) {
+			handler.sendEmptyMessage(3);
+		}
 		chineseCandidateView.setSuggestions(null, true, true);
 		handCandidateView.setSuggestions(null, true, true);
 		setCandidatesViewShown(false);
@@ -550,10 +556,12 @@ public class MainActivity extends InputMethodService implements
 		public static final int FRAME = 60;// 画布更新帧数
 		boolean mIsRunning = false; // 控制是否更新
 		float posX, posY; // 触摸点当前座标
+		Bitmap back;
 
 		public WriteView(Context context) {
 			super(context);
-
+			back = BitmapFactory.decodeResource(context.getResources(),
+					R.drawable.hwbk);
 			// 设置拥有焦点
 			this.setFocusable(true);
 			// 设置触摸时拥有焦点
@@ -565,13 +573,13 @@ public class MainActivity extends InputMethodService implements
 
 			// 创建画笔
 			mPaint = new Paint();
-			mPaint.setColor(Color.BLUE);// 颜色
+			mPaint.setColor(Color.argb(0xff, 0xff, 0xcc, 0));// 颜色
 			mPaint.setAntiAlias(true);// 抗锯齿
 			// Paint.Style.STROKE 、Paint.Style.FILL、Paint.Style.FILL_AND_STROKE
 			// 意思分别为 空心 、实心、实心与空心
 			mPaint.setStyle(Paint.Style.STROKE);
 			mPaint.setStrokeCap(Paint.Cap.ROUND);// 设置画笔为圆滑状
-			mPaint.setStrokeWidth(5);// 设置线的宽度
+			mPaint.setStrokeWidth(15);// 设置线的宽度
 
 			// 创建路径轨迹
 			mPath = new Path();
@@ -690,7 +698,8 @@ public class MainActivity extends InputMethodService implements
 			// 防止canvas为null导致出现null pointer问题
 			Canvas mCanvas = mSurfaceHolder.lockCanvas();
 			if (mCanvas != null) {
-				mCanvas.drawColor(Color.WHITE); // 清空画布
+				// mCanvas.drawColor(Color.WHITE); // 清空画布
+				mCanvas.drawBitmap(back, 0, 0, null);
 				mCanvas.drawPath(mPath, mPaint); // 画出轨迹
 
 				// mCanvas.drawLine(0, 600, 600, 600, mPaint);
@@ -716,12 +725,14 @@ public class MainActivity extends InputMethodService implements
 
 		}
 
-		void clear() {
+		boolean clear() {
 			Canvas mCanvas = mSurfaceHolder.lockCanvas();
 			if (mCanvas != null) {
-				mCanvas.drawColor(Color.WHITE); // 清空画布
+				mCanvas.drawBitmap(back, 0, 0, null);
 				mSurfaceHolder.unlockCanvasAndPost(mCanvas);
+				return true;
 			}
+			return false;
 		}
 		/*
 		 * @Override public void run() {

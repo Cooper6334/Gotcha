@@ -17,8 +17,11 @@
 package com.tomhw;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 
 import android.view.MotionEvent;
@@ -41,6 +44,10 @@ public class HandCandidateView extends View {
 
 	boolean flagOpen = false;
 	int yoffset = 10;
+	Bitmap[] word = new Bitmap[2];
+	Bitmap[] open = new Bitmap[2];
+	Bitmap[] delete = new Bitmap[2];
+	Bitmap[] close = new Bitmap[2];
 
 	// Handler h = new Handler() {
 	// @Override
@@ -68,6 +75,25 @@ public class HandCandidateView extends View {
 
 		setSuggestions(null, true, true);
 		// mService.openHandCandidate(flagOpen);
+
+		word[0] = resizeBitmap(BitmapFactory.decodeResource(
+				context.getResources(), R.drawable.hw11));
+
+		word[1] = resizeBitmap(BitmapFactory.decodeResource(
+				context.getResources(), R.drawable.hw12));
+		delete[0] = resizeBitmap(BitmapFactory.decodeResource(
+				context.getResources(), R.drawable.hw21));
+		delete[1] = resizeBitmap(BitmapFactory.decodeResource(
+				context.getResources(), R.drawable.hw22));
+		open[0] = resizeBitmap(BitmapFactory.decodeResource(
+				context.getResources(), R.drawable.hw31));
+		open[1] = resizeBitmap(BitmapFactory.decodeResource(
+				context.getResources(), R.drawable.hw32));
+		close[0] = resizeBitmap(BitmapFactory.decodeResource(
+				context.getResources(), R.drawable.hw41));
+		close[1] = resizeBitmap(BitmapFactory.decodeResource(
+				context.getResources(), R.drawable.hw42));
+
 	}
 
 	/**
@@ -88,7 +114,6 @@ public class HandCandidateView extends View {
 		if (canvas != null) {
 			super.onDraw(canvas);
 
-			canvas.drawColor(Color.GREEN);
 			if (mSuggestions == null)
 				return;
 
@@ -98,27 +123,33 @@ public class HandCandidateView extends View {
 				int x = 0;
 				int y = 146;
 				mPaint.setColor(Color.RED);
-				canvas.drawText("開", 30, 544, mPaint);
-				canvas.drawText("刪", 176, 544, mPaint);
 
 				int c = 6;
 				if (count < 6) {
 					c = count;
 				}
-				canvas.drawLine(0, 146, 292, 146, mPaint);
-				canvas.drawLine(0, 292, 292, 292, mPaint);
-				canvas.drawLine(0, 438, 292, 438, mPaint);
-				canvas.drawLine(146, 0, 146, 584, mPaint);
+				// canvas.drawLine(0, 146, 292, 146, mPaint);
+				// canvas.drawLine(0, 292, 292, 292, mPaint);
+				// canvas.drawLine(0, 438, 292, 438, mPaint);
+				// canvas.drawLine(146, 0, 146, 584, mPaint);
+				for (int i = 0; i < 4; i++) {
+					for (int j = 0; j < 2; j++) {
+						canvas.drawBitmap(word[0], j * 146, i * 146, null);
+					}
+				}
+				canvas.drawBitmap(word[0], 0, 0, null);
 				for (int i = 0; i < c; i++) {
 
 					String suggestion = mSuggestions.get(i);
 
 					if (i == selectWord) {
 						mPaint.setColor(Color.RED);
+						canvas.drawBitmap(word[1], x, y - 146, null);
+						canvas.drawText(suggestion, x + 30, y - 40, mPaint);
 					} else {
 						mPaint.setColor(Color.BLACK);
+						canvas.drawText(suggestion, x + 30, y - 40, mPaint);
 					}
-					canvas.drawText(suggestion, x + 30, y - 40, mPaint);
 
 					if (i % 3 == 2) {
 						x = 146;
@@ -127,7 +158,8 @@ public class HandCandidateView extends View {
 						y += 146;
 					}
 				}
-
+				canvas.drawBitmap(open[0], 0, 438, null);
+				canvas.drawBitmap(delete[0], 146, 438, null);
 				// mTotalWidth = x;
 				// if (mTargetScrollX != getScrollX()) {
 				// scrollToTarget();
@@ -135,20 +167,14 @@ public class HandCandidateView extends View {
 			} else {
 				int x = 204;
 				int y = 146;
-				mPaint.setColor(Color.RED);
 
-				// canvas.drawLine(204, 0, 204, 584, mPaint);
-				for (int i = 0; i < (this.getWidth() - 204) / 146; i++) {
-					canvas.drawLine(204 + i * 146, 0, 204 + i * 146, 5846,
-							mPaint);
+				for (int i = 0; i < 4; i++) {
+					for (int j = 0; j < (getWidth() - 204) / 146; j++) {
+						canvas.drawBitmap(word[0], 204 + j * 146, i * 146, null);
+					}
 				}
 
-				canvas.drawLine(204, 146, getWidth(), 146, mPaint);
-				canvas.drawLine(204, 292, getWidth(), 292, mPaint);
-				canvas.drawLine(204, 438, getWidth(), 438, mPaint);
-
-				canvas.drawText("關", 30, 324, mPaint);
-				canvas.drawText("刪", this.getWidth() - 146 + 30, 544, mPaint);
+				mPaint.setColor(Color.RED);
 
 				int c = 23;
 				if (count < 23) {
@@ -159,6 +185,7 @@ public class HandCandidateView extends View {
 
 					if (i == selectWord) {
 						mPaint.setColor(Color.RED);
+						canvas.drawBitmap(word[1], x, y - 146, null);
 					} else {
 						mPaint.setColor(Color.BLACK);
 					}
@@ -171,6 +198,9 @@ public class HandCandidateView extends View {
 						y += 146;
 					}
 				}
+
+				canvas.drawBitmap(close[0], 0, 0, null);
+				canvas.drawBitmap(delete[0], getWidth() - 146, 438, null);
 			}
 		}
 	}
@@ -250,4 +280,15 @@ public class HandCandidateView extends View {
 		return true;
 	}
 
+	Bitmap resizeBitmap(Bitmap b) {
+		Matrix m = new Matrix();
+		float x = b.getWidth();
+		float y = b.getHeight();
+		m.postScale(1.f / 3.f, 1.f / 3.f);
+		// m.postScale(-1.f, 1.f);
+
+		Bitmap r = Bitmap.createBitmap(b, 0, 0, b.getWidth(), b.getHeight(), m,
+				true);
+		return r;
+	}
 }

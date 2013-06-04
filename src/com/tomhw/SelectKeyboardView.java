@@ -29,12 +29,12 @@ public class SelectKeyboardView extends LinearLayout {
 			draw[i] = new Drawable[2];
 
 		}
-		draw[0][0] = getResources().getDrawable(R.drawable.sk11);
-		draw[0][1] = getResources().getDrawable(R.drawable.sk12);
-		draw[1][0] = getResources().getDrawable(R.drawable.sk21);
-		draw[1][1] = getResources().getDrawable(R.drawable.sk22);
-		draw[2][0] = getResources().getDrawable(R.drawable.sk31);
-		draw[2][1] = getResources().getDrawable(R.drawable.sk32);
+		draw[0][0] = getResources().getDrawable(R.drawable.sk21);
+		draw[0][1] = getResources().getDrawable(R.drawable.sk22);
+		draw[1][0] = getResources().getDrawable(R.drawable.sk31);
+		draw[1][1] = getResources().getDrawable(R.drawable.sk32);
+		draw[2][0] = getResources().getDrawable(R.drawable.sk11);
+		draw[2][1] = getResources().getDrawable(R.drawable.sk12);
 		// TODO Auto-generated constructor stub
 		for (int i = 0; i < 3; i++) {
 			btn[i] = new ImageView(context);
@@ -57,11 +57,11 @@ public class SelectKeyboardView extends LinearLayout {
 		}
 		selectKeyboard = x;
 		for (int i = 0; i < 3; i++) {
-			 if (selectKeyboard == i) {
-					btn[i].setImageDrawable(draw[i][1]);
-			 } else {
-					btn[i].setImageDrawable(draw[i][0]);
-			 }
+			if (selectKeyboard == i) {
+				btn[i].setImageDrawable(draw[i][1]);
+			} else {
+				btn[i].setImageDrawable(draw[i][0]);
+			}
 		}
 	}
 
@@ -69,4 +69,11 @@ public class SelectKeyboardView extends LinearLayout {
 		setTarget((selectKeyboard + 1) % 3);
 	}
 
+	int getSelect() {
+		return (selectKeyboard + 1) % 3;
+	}
+
+	void setKeyboard(int k) {
+		selectKeyboard= (k - 1) % 3;
+	}
 }

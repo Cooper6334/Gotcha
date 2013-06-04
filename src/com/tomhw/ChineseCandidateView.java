@@ -72,7 +72,7 @@ public class ChineseCandidateView extends View {
 	 */
 	public ChineseCandidateView(Context context) {
 		super(context);
-		
+
 		mSelectionHighlight = context.getResources().getDrawable(
 				android.R.drawable.list_selector_background);
 		mSelectionHighlight.setState(new int[] { android.R.attr.state_enabled,
@@ -174,7 +174,7 @@ public class ChineseCandidateView extends View {
 		}
 
 		int x = 0;
-		final int count = mSuggestions.size();
+		int count = mSuggestions.size();
 		final int height = getHeight();
 		final Rect bgPadding = mBgPadding;
 		final Paint paint = mPaint;
@@ -184,6 +184,9 @@ public class ChineseCandidateView extends View {
 		final boolean typedWordValid = mTypedWordValid;
 		final int y = (int) (((height - mPaint.getTextSize()) / 2) - mPaint
 				.ascent());
+		if (count > 32) {
+			count = 32;
+		}
 
 		for (int i = 0; i < count; i++) {
 			String suggestion = mSuggestions.get(i);
