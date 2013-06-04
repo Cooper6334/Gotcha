@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import com.tomhw.ShowTagActivity.getImagesTask;
+
 import xBaseJ.DBF;
 import xBaseJ.Field;
 import xBaseJ.xBaseJException;
@@ -35,6 +37,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.PixelFormat;
+import android.graphics.PorterDuff.Mode;
 import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
@@ -266,7 +270,6 @@ public class MainActivity extends InputMethodService implements
 				R.layout.handwrite, null);
 		writeView = new WriteView(this);
 		writeView.setId(123);
-		handler.sendEmptyMessage(3);
 		((LinearLayout) keyBoardView[0].findViewById(R.id.linearLayout2))
 				.addView(writeView);
 
@@ -542,9 +545,6 @@ public class MainActivity extends InputMethodService implements
 	// 0手寫1注音2英文3符號
 	void setKeyboard(int num) {
 		setInputView(keyBoardView[num]);
-		if (num == 0) {
-			handler.sendEmptyMessage(3);
-		}
 		chineseCandidateView.setSuggestions(null, true, true);
 		handCandidateView.setSuggestions(null, true, true);
 		setCandidatesViewShown(false);
@@ -649,18 +649,17 @@ public class MainActivity extends InputMethodService implements
 		public static final int FRAME = 60;// 画布更新帧数
 		boolean mIsRunning = false; // 控制是否更新
 		float posX, posY; // 触摸点当前座标
-		Bitmap back;
 
 		public WriteView(Context context) {
 			super(context);
-			back = BitmapFactory.decodeResource(context.getResources(),
-					R.drawable.hwbk);
+			this.setZOrderOnTop(true);
 			// 设置拥有焦点
 			this.setFocusable(true);
 			// 设置触摸时拥有焦点
 			this.setFocusableInTouchMode(true);
 			// 获取holder
 			mSurfaceHolder = this.getHolder();
+			mSurfaceHolder.setFormat(PixelFormat.TRANSPARENT);
 			// 添加holder到callback函数之中
 			// mSurfaceHolder.addCallback(this);
 
@@ -704,6 +703,7 @@ public class MainActivity extends InputMethodService implements
 				System.out.println("model文件打开失败");
 				return;
 			}
+
 		}
 
 		@Override
@@ -789,10 +789,12 @@ public class MainActivity extends InputMethodService implements
 
 		void Draw() {
 			// 防止canvas为null导致出现null pointer问题
+
 			Canvas mCanvas = mSurfaceHolder.lockCanvas();
 			if (mCanvas != null) {
 				// mCanvas.drawColor(Color.WHITE); // 清空画布
-				mCanvas.drawBitmap(back, 0, 0, null);
+				// mCanvas.drawBitmap(back, 0, 0, null);
+				mCanvas.drawColor(Color.TRANSPARENT, Mode.CLEAR);
 				mCanvas.drawPath(mPath, mPaint); // 画出轨迹
 
 				// mCanvas.drawLine(0, 600, 600, 600, mPaint);
@@ -821,7 +823,7 @@ public class MainActivity extends InputMethodService implements
 		boolean clear() {
 			Canvas mCanvas = mSurfaceHolder.lockCanvas();
 			if (mCanvas != null) {
-				mCanvas.drawBitmap(back, 0, 0, null);
+				mCanvas.drawColor(Color.TRANSPARENT, Mode.CLEAR);
 				mSurfaceHolder.unlockCanvasAndPost(mCanvas);
 				return true;
 			}
@@ -874,9 +876,11 @@ public class MainActivity extends InputMethodService implements
 			// mInputMethodManager.showSoftInput( getCurrentInputConnection().,
 			// 0);
 		}
-		if (writeView != null) {
-			handler.sendEmptyMessage(3);
+		if (keyBoardView[nowKeyboard] != null) {
+			setInputView(keyBoardView[nowKeyboard]);
 		}
+		Log.e("hand", isInputViewShown() + " " + nowKeyboard);
+
 	}
 
 	@Override

@@ -7,7 +7,8 @@
     <RelativeLayout
         android:id="@+id/relative"
         android:layout_width="match_parent"
-        android:layout_height="584px" >
+        android:layout_height="584px"
+        android:background="@drawable/hwbk" >
 
         <LinearLayout
             android:id="@+id/linearLayout2"
