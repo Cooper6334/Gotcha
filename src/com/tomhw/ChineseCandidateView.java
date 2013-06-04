@@ -72,6 +72,7 @@ public class ChineseCandidateView extends View {
 	 */
 	public ChineseCandidateView(Context context) {
 		super(context);
+		
 		mSelectionHighlight = context.getResources().getDrawable(
 				android.R.drawable.list_selector_background);
 		mSelectionHighlight.setState(new int[] { android.R.attr.state_enabled,

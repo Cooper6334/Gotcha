@@ -34,28 +34,18 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.inputmethodservice.InputMethodService;
-import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
-import android.text.InputType;
-import android.text.method.MetaKeyKeyListener;
 import android.util.Log;
-import android.view.KeyCharacterMap;
-import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
-import android.view.SurfaceHolder.Callback;
-import android.view.View.OnTouchListener;
 import android.view.ViewGroup.LayoutParams;
-import android.view.inputmethod.CompletionInfo;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputConnection;
 import android.view.inputmethod.InputMethodManager;
-import android.view.inputmethod.InputMethodSubtype;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -312,19 +302,6 @@ public class MainActivity extends InputMethodService implements
 				}
 			});
 		}
-		((Button) keyBoardView[1].findViewById(R.id.function7))
-				.setOnClickListener(new Button.OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						// TODO Auto-generated method stub
-						for (int i = 0; i < 4; i++) {
-							chineseAll[i] = "";
-						}
-						chineseCandidateView.setSuggestions(null, true, true);
-						getCurrentInputConnection().commitText(" ", 1);
-
-					}
-				});
 
 		// 英文鍵盤
 		keyBoardView[2] = (View) getLayoutInflater().inflate(R.layout.english,
@@ -363,15 +340,6 @@ public class MainActivity extends InputMethodService implements
 					});
 		}
 
-		((Button) keyBoardView[2].findViewById(R.id.function7))
-				.setOnClickListener(new Button.OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						// TODO Auto-generated method stub
-						getCurrentInputConnection().commitText(" ", 1);
-
-					}
-				});
 		// return keyBoardView[1];
 
 		// 共通按鈕---------------------------------------------------
@@ -381,14 +349,7 @@ public class MainActivity extends InputMethodService implements
 				Button b = ((Button) keyBoardView[i]
 						.findViewById(R.id.function3));
 				if (b != null) {
-					// b.setOnClickListener(new Button.OnClickListener() {
-					// @Override
-					// public void onClick(View v) {
-					// // TODO Auto-generated method stub
-					// setKeyboard(1);
-					//
-					// }
-					// });
+
 					b.setOnTouchListener(new Button.OnTouchListener() {
 
 						@Override
@@ -445,6 +406,42 @@ public class MainActivity extends InputMethodService implements
 										FindActivity.class);
 								i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 								startActivity(i);
+							}
+						});
+					}
+
+					// 空白
+
+					b = ((Button) keyBoardView[i].findViewById(R.id.function7));
+					if (b != null) {
+						b.setOnClickListener(new Button.OnClickListener() {
+
+							@Override
+							public void onClick(View v) {
+								// TODO Auto-generated method stub
+
+								getCurrentInputConnection().commitText(
+										writeWord + " ", 1);
+								writeWord = "";
+								handCandidateView.setSuggestions(null, true,
+										true);
+
+							}
+						});
+					}
+
+					b = ((Button) keyBoardView[i].findViewById(R.id.function5));
+					if (b != null) {
+						b.setOnClickListener(new Button.OnClickListener() {
+
+							@Override
+							public void onClick(View v) {
+								// TODO Auto-generated method stub
+								Intent i = new Intent(MainActivity.this,
+										InputVoiceActivity.class);
+								i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+								startActivity(i);
+
 							}
 						});
 					}
@@ -529,12 +526,13 @@ public class MainActivity extends InputMethodService implements
 
 	}
 
-	void openHandCandidate(boolean flag) {
-		Toast.makeText(this, "open hand " + flag, Toast.LENGTH_SHORT).show();
+	void openHandCandidate(boolean flag, int count) {
+		// Toast.makeText(this, "open hand " + flag, Toast.LENGTH_SHORT).show();
 		if (flag) {
+			int x = 204 + ((count / 4) + 1) * 146;
 			handCandidateView.setLayoutParams(new RelativeLayout.LayoutParams(
-					876, 584));
-			handCandidateView.setX(204);
+					x, 584));
+			handCandidateView.setX(1080 - x);
 		} else {
 			handCandidateView.setLayoutParams(new RelativeLayout.LayoutParams(
 					292, 584));
@@ -618,6 +616,12 @@ public class MainActivity extends InputMethodService implements
 			// 按触摸动作分发执行内容
 			switch (action) {
 			case MotionEvent.ACTION_DOWN:
+				if (str == 0) {
+					if (handCandidateView.flagOpen) {
+						handCandidateView.flagOpen = false;
+						openHandCandidate(false, 0);
+					}
+				}
 				flagWriting = true;
 				mPath.moveTo(x, y);// 设定轨迹的起始点
 
@@ -643,7 +647,6 @@ public class MainActivity extends InputMethodService implements
 				if (strokes > 0) {
 					result = recognizerClassify(recognizer, character, 10);
 					if (result > 0) {
-						writeWord = resultValue(result, 0);
 
 						candidateList = new ArrayList<String>();
 
@@ -656,6 +659,8 @@ public class MainActivity extends InputMethodService implements
 								break;
 							}
 						}
+
+						// 依照使用頻率重新排序
 						ArrayList<String> tmp = new ArrayList<String>();
 						for (int i = candidateList.size() - 1; i >= 0; i--) {
 							if (chineseWeight.get(candidateList.get(i)) == null) {
@@ -665,7 +670,7 @@ public class MainActivity extends InputMethodService implements
 						for (int i = tmp.size() - 1; i >= 0; i--) {
 							candidateList.add(tmp.get(i));
 						}
-						setCandidatesViewShown(true);
+						writeWord = candidateList.get(0);
 						handCandidateView.setSuggestions(candidateList, true,
 								true);
 					}
@@ -688,23 +693,24 @@ public class MainActivity extends InputMethodService implements
 				mCanvas.drawColor(Color.WHITE); // 清空画布
 				mCanvas.drawPath(mPath, mPaint); // 画出轨迹
 
-				mCanvas.drawLine(0, 600, 600, 600, mPaint);
-				mCanvas.drawLine(600, 0, 600, 600, mPaint);
-				// 数据记录
-				mCanvas.drawText("model打开状态 : " + modelState, 5, 50, mTextPaint);
-				mCanvas.drawText("触点X的座标 : " + posX, 5, 100, mTextPaint);
-				mCanvas.drawText("触点Y的座标 : " + posY, 5, 150, mTextPaint);
-
-				// mCanvas.drawText("总笔画数 : " + strokes, 5, 200, mTextPaint);
-
-				// 显示识别出的文字
-				if (result != 0) {
-					for (int i = 0; i < resultSize(result); i++) {
-						mCanvas.drawText(resultValue(result, i) + " : "
-								+ resultScore(result, i), 5, 300 + i * 50,
-								mTextPaint);
-					}
-				}
+				// mCanvas.drawLine(0, 600, 600, 600, mPaint);
+				// mCanvas.drawLine(600, 0, 600, 600, mPaint);
+				// // 数据记录
+				// mCanvas.drawText("model打开状态 : " + modelState, 5, 50,
+				// mTextPaint);
+				// mCanvas.drawText("触点X的座标 : " + posX, 5, 100, mTextPaint);
+				// mCanvas.drawText("触点Y的座标 : " + posY, 5, 150, mTextPaint);
+				//
+				// // mCanvas.drawText("总笔画数 : " + strokes, 5, 200, mTextPaint);
+				//
+				// // 显示识别出的文字
+				// if (result != 0) {
+				// for (int i = 0; i < resultSize(result); i++) {
+				// mCanvas.drawText(resultValue(result, i) + " : "
+				// + resultScore(result, i), 5, 300 + i * 50,
+				// mTextPaint);
+				// }
+				// }
 				mSurfaceHolder.unlockCanvasAndPost(mCanvas);
 			}
 
@@ -714,8 +720,6 @@ public class MainActivity extends InputMethodService implements
 			Canvas mCanvas = mSurfaceHolder.lockCanvas();
 			if (mCanvas != null) {
 				mCanvas.drawColor(Color.WHITE); // 清空画布
-				mCanvas.drawLine(0, 600, 600, 600, mPaint);
-				mCanvas.drawLine(600, 0, 600, 600, mPaint);
 				mSurfaceHolder.unlockCanvasAndPost(mCanvas);
 			}
 		}
@@ -763,18 +767,30 @@ public class MainActivity extends InputMethodService implements
 			getCurrentInputConnection().commitText(testString,
 					testString.length());
 			testString = "";
+			// mInputMethodManager.showSoftInput( getCurrentInputConnection().,
+			// 0);
 		}
-		handler.sendEmptyMessage(1);
 	}
 
 	@Override
 	public void onFinishInput() {
 		super.onFinishInput();
+
+		handCandidateView.setSuggestions(null, true, true);
+		str = 0;
+
+		characterClear(character);
+		strokes = 0;
+		mPath.reset();// 触摸结束即清除轨迹
+		handwriteCount = 0;
+		writeWord = "";
+		writeView.clear();
+
 		for (int i = 0; i < 4; i++) {
 			chineseAll[i] = "";
-			chineseCandidateView.setSuggestions(null, true, true);
-			setCandidatesViewShown(false);
 		}
+		chineseCandidateView.setSuggestions(null, true, true);
+		setCandidatesViewShown(false);
 		Log.e("IME", "onFinish");
 	}
 

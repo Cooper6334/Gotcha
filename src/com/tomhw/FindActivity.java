@@ -36,6 +36,7 @@ import android.os.Message;
 import android.speech.RecognizerIntent;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -49,17 +50,18 @@ public class FindActivity extends Activity {
 		public void handleMessage(Message m) {
 			switch (m.what) {
 			case 0:
-				for (int i = 0; i < 4; i++) {
-					if (names[i].equals("")) {
-						nameViews[i].setText(null);
-						imageButtons[i].setImageBitmap(null);
-						continue;
-					}
-					nameViews[i].setText(names[i]);
-					imageButtons[i].setImageBitmap(images[i]);
-
-				}
+				flagQuerying = false;
 				progress.dismiss();
+				// for (int i = 0; i < 4; i++) {
+				// if (names[i].equals("")) {
+				// nameViews[i].setText(null);
+				// imageButtons[i].setImageBitmap(null);
+				// continue;
+				// }
+				// nameViews[i].setText(names[i]);
+				// imageButtons[i].setImageBitmap(images[i]);
+				//
+				// }
 
 				// if (nameList == null) {
 				// nameList = new ArrayList<String>();
@@ -97,11 +99,11 @@ public class FindActivity extends Activity {
 	// ListView listView;
 	ArrayList<TagEdge> showingEdges;
 	// ArrayList<DataSet> allData;
-
-	ImageButton imageButtons[] = new ImageButton[4];
-	Bitmap images[] = new Bitmap[4];
-	TextView nameViews[] = new TextView[4];
-	String names[] = new String[4];
+	InputMethodManager imm;
+	// ImageButton imageButtons[] = new ImageButton[4];
+	// Bitmap images[] = new Bitmap[4];
+	// TextView nameViews[] = new TextView[4];
+	// String names[] = new String[4];
 
 	TextView textView;
 
@@ -111,15 +113,13 @@ public class FindActivity extends Activity {
 	int dataCnt = 0;
 
 	ProgressDialog progress;
-	Dialog dialog;
 	EditText editText;
 	private static final int VOICE_RECOGNITION_REQUEST_CODE = 1234;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
-
+		setContentView(R.layout.finding);
 
 		// listView = (ListView) findViewById(R.id.listView1);
 		//
@@ -136,115 +136,37 @@ public class FindActivity extends Activity {
 		//
 		// }
 		// });
-
-		nameViews[0] = (TextView) findViewById(R.id.textView1);
-		nameViews[1] = (TextView) findViewById(R.id.textView2);
-		nameViews[2] = (TextView) findViewById(R.id.textView3);
-		nameViews[3] = (TextView) findViewById(R.id.textView4);
-		imageButtons[0] = (ImageButton) findViewById(R.id.imageButton1);
-		imageButtons[1] = (ImageButton) findViewById(R.id.imageButton2);
-		imageButtons[2] = (ImageButton) findViewById(R.id.imageButton3);
-		imageButtons[3] = (ImageButton) findViewById(R.id.imageButton4);
-
-		textView = (TextView) findViewById(R.id.textView0);
-		dialog = new Dialog(this);
-		dialog.setTitle("輸入tag");
-		dialog.setContentView(R.layout.addtagdialog);
-		editText = (EditText) dialog.findViewById(R.id.editText1);
-
+		imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+		textView = (TextView) findViewById(R.id.textView1);
+		editText = (EditText) findViewById(R.id.editText1);
+		editText.setText("");
 		progress = new ProgressDialog(this);
 		progress.setMessage("搜尋中");
-		for (int i = 0; i < 4; i++) {
 
-			nameViews[i].setText(null);
-			imageButtons[i].setId(100 + i);
-			imageButtons[i].setImageBitmap(null);
-			imageButtons[i]
-					.setOnLongClickListener(new ImageButton.OnLongClickListener() {
-
-						@Override
-						public boolean onLongClick(View v) {
-							// TODO Auto-generated method stub
-							if (names[v.getId() - 100] == null
-									|| names[v.getId() - 100].equals("")) {
-								return false;
-							}
-							Intent i = new Intent(FindActivity.this,
-									ShowTagActivity.class);
-							i.putExtra("tag", names[v.getId() - 100]);
-							startActivity(i);
-							finish();
-							return true;
-						}
-					});
-			imageButtons[i]
-					.setOnClickListener(new ImageButton.OnClickListener() {
-
-						@Override
-						public void onClick(View v) {
-							// TODO Auto-generated method stub
-							if (names[v.getId() - 100] == null
-									|| names[v.getId() - 100].equals("")) {
-								return;
-							}
-							MainActivity.testString = names[v.getId() - 100];
-							finish();
-
-						}
-					});
-
-		}
-		// 語音輸入
-		((Button) dialog.findViewById(R.id.button1))
-				.setOnClickListener(new Button.OnClickListener() {
-
-					@Override
-					public void onClick(View v) {
-						startVoiceRecognitionActivity();
-					}
-				});
 		// query
-		((Button) dialog.findViewById(R.id.button2))
+		((Button) findViewById(R.id.button2))
 				.setOnClickListener(new Button.OnClickListener() {
 
 					@Override
 					public void onClick(View v) {
-						dialog.dismiss();
 
-						if (flagQuerying) {
+						if (flagQuerying || editText.getText().toString().equals("")) {
 							return;
 						}
+						imm.hideSoftInputFromWindow(editText.getWindowToken(),
+								0);
 						String s = editText.getText().toString();
 						textView.setText(textView.getText() + s + " ");
 						progress.show();
 						query(s);
+						editText.setText("");
 						dataCnt++;
 
 					}
 				});
-		// cancel
-		((Button) dialog.findViewById(R.id.button3))
-				.setOnClickListener(new Button.OnClickListener() {
 
-					@Override
-					public void onClick(View v) {
-						dialog.dismiss();
-					}
-				});
-		// add
-		((Button) findViewById(R.id.button1))
-				.setOnClickListener(new Button.OnClickListener() {
-
-					@Override
-					public void onClick(View v) {
-						editText.setText("");
-						dialog.show();
-
-					}
-
-				});
 		// reset
-		((Button) findViewById(R.id.button2))
+		((Button) findViewById(R.id.button1))
 				.setOnClickListener(new Button.OnClickListener() {
 
 					@Override
@@ -254,13 +176,14 @@ public class FindActivity extends Activity {
 						textView.setText(" ");
 						dataCnt = 0;
 						queryData = null;
-
-						for (int i = 0; i < 4; i++) {
-
-							nameViews[i].setText(null);
-							imageButtons[i].setImageBitmap(null);
-
-						}
+						editText.setText("");
+						//
+						// for (int i = 0; i < 4; i++) {
+						//
+						// nameViews[i].setText(null);
+						// imageButtons[i].setImageBitmap(null);
+						//
+						// }
 					}
 				});
 
@@ -359,68 +282,68 @@ public class FindActivity extends Activity {
 				for (TagEdge e : showingEdges) {
 					Log.e("tag", e.name + ":" + e.score);
 				}
-				// 取文字
-				for (int i = 0; i < 4; i++) {
-					if (i < showingEdges.size()) {
-						names[i] = showingEdges.get(i).name;
-					} else {
-						names[i] = "";
-					}
-				}
-
-				// 找圖片
-				for (int i = 0; i < 4; i++) {
-					if (names[i].equals("")) {
-						break;
-					}
-					URL url;
-					Bitmap b = null;
-					try {
-						// String s2 = textView.getText().toString();
-						// s2 = s2.substring(0, s2.length() - 1);
-						String s = URLEncoder.encode(names[i], "UTF-8");
-						// Log.e("search",
-						// "https://ajax.googleapis.com/ajax/services/search/images?"
-						// + "v=1.0&q=" + s + "&rsz=1&hl=zh-TW");
-						url = new URL(
-								"https://ajax.googleapis.com/ajax/services/search/images?"
-										+ "v=1.0&q=" + s + "&rsz=1&hl=zh-TW");
-						URLConnection connection = url.openConnection();
-						connection.addRequestProperty("Referer",
-								"http://technotalkative.com");
-
-						String line;
-						StringBuilder builder = new StringBuilder();
-						BufferedReader reader = new BufferedReader(
-								new InputStreamReader(connection
-										.getInputStream()));
-						while ((line = reader.readLine()) != null) {
-							builder.append(line);
-						}
-
-						JSONObject json = new JSONObject(builder.toString());
-						JSONObject responseObject = json
-								.getJSONObject("responseData");
-						JSONArray resultArray = responseObject
-								.getJSONArray("results");
-						if (resultArray.length() > 0) {
-							JSONObject image = resultArray.getJSONObject(0);
-							// Log.e("json", image.getString("tbUrl"));
-							b = GetDataFromURL.getBitmapFromURL(image
-									.getString("tbUrl"));
-						}
-						images[i] = b;
-					} catch (MalformedURLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (JSONException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
+				// // 取文字
+				// for (int i = 0; i < 4; i++) {
+				// if (i < showingEdges.size()) {
+				// names[i] = showingEdges.get(i).name;
+				// } else {
+				// names[i] = "";
+				// }
+				// }
+				//
+				// // 找圖片
+				// for (int i = 0; i < 4; i++) {
+				// if (names[i].equals("")) {
+				// break;
+				// }
+				// URL url;
+				// Bitmap b = null;
+				// try {
+				// // String s2 = textView.getText().toString();
+				// // s2 = s2.substring(0, s2.length() - 1);
+				// String s = URLEncoder.encode(names[i], "UTF-8");
+				// // Log.e("search",
+				// // "https://ajax.googleapis.com/ajax/services/search/images?"
+				// // + "v=1.0&q=" + s + "&rsz=1&hl=zh-TW");
+				// url = new URL(
+				// "https://ajax.googleapis.com/ajax/services/search/images?"
+				// + "v=1.0&q=" + s + "&rsz=1&hl=zh-TW");
+				// URLConnection connection = url.openConnection();
+				// connection.addRequestProperty("Referer",
+				// "http://technotalkative.com");
+				//
+				// String line;
+				// StringBuilder builder = new StringBuilder();
+				// BufferedReader reader = new BufferedReader(
+				// new InputStreamReader(connection
+				// .getInputStream()));
+				// while ((line = reader.readLine()) != null) {
+				// builder.append(line);
+				// }
+				//
+				// JSONObject json = new JSONObject(builder.toString());
+				// JSONObject responseObject = json
+				// .getJSONObject("responseData");
+				// JSONArray resultArray = responseObject
+				// .getJSONArray("results");
+				// if (resultArray.length() > 0) {
+				// JSONObject image = resultArray.getJSONObject(0);
+				// // Log.e("json", image.getString("tbUrl"));
+				// b = GetDataFromURL.getBitmapFromURL(image
+				// .getString("tbUrl"));
+				// }
+				// images[i] = b;
+				// } catch (MalformedURLException e) {
+				// // TODO Auto-generated catch block
+				// e.printStackTrace();
+				// } catch (IOException e) {
+				// // TODO Auto-generated catch block
+				// e.printStackTrace();
+				// } catch (JSONException e) {
+				// // TODO Auto-generated catch block
+				// e.printStackTrace();
+				// }
+				// }
 
 				// UI
 				handler.sendEmptyMessage(0);
