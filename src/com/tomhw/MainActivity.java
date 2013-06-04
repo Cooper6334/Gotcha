@@ -73,7 +73,7 @@ public class MainActivity extends InputMethodService implements
 	static final boolean PROCESS_HARD_KEYS = true;
 
 	static String testString = "";
-	final int initKeyboard = 0;
+	final int initKeyboard = 1;
 
 	// 鍵盤
 	int nowKeyboard = initKeyboard;
@@ -138,6 +138,7 @@ public class MainActivity extends InputMethodService implements
 				break;
 
 			case 3:
+				Log.e("write", "clear");
 				if (!writeView.clear()) {
 					sendEmptyMessageDelayed(3, 100);
 				}
@@ -872,6 +873,9 @@ public class MainActivity extends InputMethodService implements
 			testString = "";
 			// mInputMethodManager.showSoftInput( getCurrentInputConnection().,
 			// 0);
+		}
+		if (writeView != null) {
+			handler.sendEmptyMessage(3);
 		}
 	}
 
