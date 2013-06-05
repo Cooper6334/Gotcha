@@ -19,6 +19,7 @@ package com.tomhw;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
@@ -82,7 +83,7 @@ public class ChineseCandidateView extends View {
 
 		Resources r = context.getResources();
 
-		setBackgroundColor(r.getColor(R.color.candidate_background));
+		setBackgroundColor(Color.rgb(100, 100, 100));
 
 		mColorNormal = r.getColor(R.color.candidate_normal);
 		mColorRecommended = r.getColor(R.color.candidate_recommended);
@@ -91,11 +92,10 @@ public class ChineseCandidateView extends View {
 				.getDimensionPixelSize(R.dimen.candidate_vertical_padding);
 
 		mPaint = new Paint();
-		mPaint.setColor(mColorNormal);
+		mPaint.setColor(Color.BLACK);
 		mPaint.setAntiAlias(true);
-		mPaint.setTextSize(r
-				.getDimensionPixelSize(R.dimen.candidate_font_height));
-		mPaint.setStrokeWidth(2);
+		mPaint.setTextSize(96);
+		mPaint.setStrokeWidth(5);
 
 		mGestureDetector = new GestureDetector(
 				new GestureDetector.SimpleOnGestureListener() {
@@ -199,6 +199,7 @@ public class ChineseCandidateView extends View {
 			if (touchX + scrollX >= x && touchX + scrollX < x + wordWidth
 					&& !scrolled) {
 				if (canvas != null) {
+
 					canvas.translate(x, 0);
 					mSelectionHighlight.setBounds(0, bgPadding.top, wordWidth,
 							height);
@@ -206,24 +207,66 @@ public class ChineseCandidateView extends View {
 					canvas.translate(-x, 0);
 				}
 				mSelectedIndex = i;
+			} else {
+
 			}
 
 			if (canvas != null) {
+
 				if ((i == 1 && !typedWordValid) || (i == 0 && typedWordValid)) {
-					paint.setFakeBoldText(true);
-					paint.setColor(mColorRecommended);
+					paint.setColor(Color.rgb(0xeb, 0x53, 0));
 				} else if (i != 0) {
-					paint.setColor(mColorOther);
+					paint.setColor(Color.rgb(27, 27, 27));
 				}
 				canvas.drawText(suggestion, x + X_GAP, y, paint);
-				paint.setColor(mColorOther);
-				canvas.drawLine(x + wordWidth + 0.5f, bgPadding.top, x
-						+ wordWidth + 0.5f, height + 1, paint);
+
+				if (i != count - 1) {
+					paint.setStrokeWidth(12);
+					paint.setColor(Color.rgb(50, 50, 50));
+					canvas.drawLine(x + wordWidth + 0.5f, bgPadding.top + 10, x
+							+ wordWidth + 0.5f, height - 10, paint);
+				}
 				paint.setFakeBoldText(false);
 			}
 			x += wordWidth;
 		}
+
+		if (canvas != null) {
+			paint.setColor(Color.rgb(130, 130, 130));
+			paint.setStrokeWidth(3);
+			// paint.setColor(Color.BLUE);
+
+			canvas.drawLine(4, 3, getWidth() - 4, 3, paint);
+			canvas.drawLine(4, getHeight() - 9, getWidth() - 4,
+					getHeight() - 9, paint);
+			paint.setStrokeWidth(4);
+			canvas.drawLine(4, 3, 4, getHeight() - 9, paint);
+
+		}
 		mTotalWidth = x;
+		int mw = x;
+		if (mw < getWidth()) {
+			mw = getWidth();
+		}
+		if (canvas != null) {
+			// canvas.drawColor(Color.rgb(100, 100, 100));
+
+			paint.setColor(Color.rgb(130, 130, 130));
+			paint.setStrokeWidth(4);
+			canvas.drawLine(mw - 8, 3, mw - 8, getHeight() - 9, paint);
+
+			paint.setColor(Color.BLACK);
+			paint.setStrokeWidth(3);
+			canvas.drawLine(0, 0, mw, 0, paint);
+
+			paint.setStrokeWidth(4);
+			canvas.drawLine(0, 0, 0, getHeight(), paint);
+			canvas.drawLine(mw, 0, mw, getHeight(), paint);
+
+			paint.setStrokeWidth(9);
+			canvas.drawLine(0, getHeight(), mw, getHeight(), paint);
+		}
+
 		if (mTargetScrollX != getScrollX()) {
 			scrollToTarget();
 		}

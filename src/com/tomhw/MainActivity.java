@@ -243,6 +243,7 @@ public class MainActivity extends InputMethodService implements
 		// }
 
 		chineseCandidateView = new ChineseCandidateView(this);
+		chineseCandidateView.setLayoutParams(new LayoutParams(1080,135));
 		chineseCandidateView.setService(this);
 
 		return chineseCandidateView;
