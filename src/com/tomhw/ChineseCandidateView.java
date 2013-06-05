@@ -95,7 +95,7 @@ public class ChineseCandidateView extends View {
 		mPaint.setAntiAlias(true);
 		mPaint.setTextSize(r
 				.getDimensionPixelSize(R.dimen.candidate_font_height));
-		mPaint.setStrokeWidth(0);
+		mPaint.setStrokeWidth(2);
 
 		mGestureDetector = new GestureDetector(
 				new GestureDetector.SimpleOnGestureListener() {

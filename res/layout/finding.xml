@@ -3,7 +3,7 @@
     android:id="@+id/RelativeLayout1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ff000000"
+    android:background="#d6000000"
     android:orientation="vertical" >
 
     <Button
@@ -28,7 +28,7 @@
         android:paddingLeft="10px"
         android:singleLine="true"
         android:hint="輸入相關字詞來聯想(例如紅色,食物......)"
-        android:textSize="12sp" >
+        android:textSize="24sp" >
     </EditText>
 
     <Button
@@ -45,7 +45,7 @@
         android:layout_height="2dp"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/button1"
-        android:layout_marginTop="79px"
+        android:layout_marginTop="119px"
         android:background="#ffffffff" />
 
     <HorizontalScrollView

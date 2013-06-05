@@ -266,7 +266,6 @@ public class MainActivity extends InputMethodService implements
 		typingView = new TextView(this);
 		typingView.setBackgroundResource(R.drawable.swbk);
 		typingView.setTextSize(36);
-		typingView.setBackgroundColor(Color.WHITE);
 		typingView.setVisibility(View.GONE);
 		typingView.setGravity(Gravity.CENTER);
 		layout.addView(typingView, new LayoutParams(140, 170));
