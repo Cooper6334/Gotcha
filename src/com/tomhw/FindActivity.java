@@ -1,39 +1,22 @@
 package com.tomhw;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
+
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.zip.GZIPInputStream;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import xBaseJ.DBF;
-import xBaseJ.Field;
-import xBaseJ.xBaseJException;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
+
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -194,6 +177,18 @@ public class FindActivity extends Activity {
 
 	}
 
+	@Override
+	public void onResume() {
+		super.onResume();
+		MainActivity.flagFindTagOpening = true;
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		MainActivity.flagFindTagOpening = false;
+	}
+
 	void query(String tag) {
 		queryTag = tag;
 
@@ -229,67 +224,6 @@ public class FindActivity extends Activity {
 				tags.get(tags.size() - 1).edges = (ArrayList<TagEdge>) (queryData.edgeList)
 						.clone();
 				reQuery();
-				// // 取交集
-				// if (showingEdges == null) {
-				// showingEdges = new ArrayList<TagEdge>();
-				// showingEdges = (ArrayList<TagEdge>) (queryData.edgeList)
-				// .clone();
-				// // for (int i = 0; i < queryData.edgeList.size(); i++) {
-				// // showingEdges.add(queryData.edgeList.get(i));
-				// // }
-				// } else {
-				// // float ms1 = 1, ms2 = 1;
-				// // if (showingEdges.size() > 0
-				// // && queryData.edgeList.size() > 0) {
-				// // ms1 = showingEdges.get(0).score;
-				// // ms2 = queryData.edgeList.get(0).score;
-				// //
-				// // }
-				// for (int i = showingEdges.size() - 1; i >= 0; i--) {
-				// boolean flagJoin = false;
-				// String a = showingEdges.get(i).name;
-				// for (int j = 0; j < queryData.edgeList.size(); j++) {
-				//
-				// String b = queryData.edgeList.get(j).name;
-				//
-				// if (a.equals(b)) {
-				// flagJoin = true;
-				//
-				// if (showingEdges.get(i).score < queryData.edgeList
-				// .get(j).score) {
-				// showingEdges.get(i).score = showingEdges
-				// .get(i).score;
-				// } else {
-				// showingEdges.get(i).score = queryData.edgeList
-				// .get(j).score;
-				// }
-				//
-				// break;
-				// }
-				//
-				// }
-				//
-				// if (!flagJoin) {
-				// showingEdges.remove(i);
-				// }
-				// }
-				// }
-				// Collections.sort(showingEdges, new Comparator<TagEdge>() {
-				//
-				// @Override
-				// public int compare(TagEdge lhs, TagEdge rhs) {
-				// // TODO Auto-generated method stub
-				// return (int) (rhs.score - lhs.score);
-				// }
-				//
-				// });
-				// Log.e("tag", "交集");
-				// for (TagEdge e : showingEdges) {
-				// Log.e("tag", e.name + ":" + e.score);
-				// }
-
-				// UI
-				// handler.sendEmptyMessage(0);
 
 			}
 		}).start();

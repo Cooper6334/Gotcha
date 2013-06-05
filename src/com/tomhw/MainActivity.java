@@ -81,6 +81,8 @@ public class MainActivity extends InputMethodService implements
 	static String testString = "";
 	final int initKeyboard = 1;
 
+	static boolean flagFindTagOpening = false;
+
 	// 鍵盤
 	int nowKeyboard = initKeyboard;
 	int nowSymbol = -1;
@@ -464,10 +466,12 @@ public class MainActivity extends InputMethodService implements
 						@Override
 						public void onClick(View v) {
 							// TODO Auto-generated method stub
-							Intent i = new Intent(MainActivity.this,
-									FindActivity.class);
-							i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-							startActivity(i);
+							if (!flagFindTagOpening) {
+								Intent i = new Intent(MainActivity.this,
+										FindActivity.class);
+								i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+								startActivity(i);
+							}
 						}
 					});
 				}
@@ -664,7 +668,7 @@ public class MainActivity extends InputMethodService implements
 						}
 					});
 				}
-				// 符號鍵盤
+				// 符號鍵盤返回
 				b = ((Button) symbolView[i].findViewById(R.id.function2));
 				if (b != null) {
 					b.setOnClickListener(new Button.OnClickListener() {
@@ -675,7 +679,7 @@ public class MainActivity extends InputMethodService implements
 						}
 					});
 				}
-				// 符號鍵盤
+				// 切換符號鍵盤
 				b = ((Button) symbolView[i].findViewById(R.id.function9));
 				if (b != null) {
 					b.setOnClickListener(new Button.OnClickListener() {
@@ -709,10 +713,12 @@ public class MainActivity extends InputMethodService implements
 						@Override
 						public void onClick(View v) {
 							// TODO Auto-generated method stub
-							Intent i = new Intent(MainActivity.this,
-									FindActivity.class);
-							i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-							startActivity(i);
+							if (!flagFindTagOpening) {
+								Intent i = new Intent(MainActivity.this,
+										FindActivity.class);
+								i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+								startActivity(i);
+							}
 						}
 					});
 				}
@@ -994,7 +1000,7 @@ public class MainActivity extends InputMethodService implements
 			case MotionEvent.ACTION_MOVE:
 				mPath.quadTo(posX, posY, x, y); // 随触摸移动设置轨迹
 				characterAdd(character, handwriteCount,
-						(int) (x * (1000f / 600)), (int) (y * (1000f / 600)));
+						(int) (x * (1000f / 788)), (int) (y * (1000f / 584)));
 				break;
 
 			case MotionEvent.ACTION_UP:
@@ -1133,6 +1139,29 @@ public class MainActivity extends InputMethodService implements
 			// mInputMethodManager.showSoftInput( getCurrentInputConnection().,
 			// 0);
 		}
+		try {
+			if (flagFindTagOpening) {
+				for (int i = 0; i < 3; i++) {
+					((Button) keyBoardView[i].findViewById(R.id.function6))
+							.setBackgroundResource(R.drawable.f62);
+				}
+				for (int i = 0; i < 2; i++) {
+					((Button) symbolView[i].findViewById(R.id.function6))
+							.setBackgroundResource(R.drawable.f62);
+				}
+			} else {
+				for (int i = 0; i < 3; i++) {
+					((Button) keyBoardView[i].findViewById(R.id.function6))
+							.setBackgroundResource(R.drawable.f6);
+				}
+				for (int i = 0; i < 2; i++) {
+					((Button) symbolView[i].findViewById(R.id.function6))
+							.setBackgroundResource(R.drawable.f6);
+				}
+			}
+		} catch (NullPointerException e) {
+
+		}
 		// if (keyBoardView[nowKeyboard] != null) {
 		// setInputView(keyBoardView[nowKeyboard]);
 		// }
@@ -1180,6 +1209,8 @@ public class MainActivity extends InputMethodService implements
 			handCandidateView.setSuggestions(null, true, true);
 		}
 	}
+
+	// ----------------------------------------
 
 	// ------------------------------------------------------------------------------------
 	@Override
