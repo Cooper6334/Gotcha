@@ -1,8 +1,7 @@
 <resources>
 
-    <string name="app_name">TOMHW</string>
+    <string name="app_name">Gotcha輸入法</string>
     <string name="label_subtype_generic">%s</string>
-    <string name="label_subtype_en_GB">English (GB)</string>
     
     <string name="symbol_smallerthan">&lt;</string>
     <string name="symbol_greaterthan">&gt;</string>
