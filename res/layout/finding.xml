@@ -3,19 +3,27 @@
     android:id="@+id/RelativeLayout1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#d6000000"
+    android:background="#c0000000"
     android:orientation="vertical" >
 
     <Button
         android:id="@+id/button1"
         android:layout_width="90px"
         android:layout_height="90px"
-        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:layout_marginLeft="40px"
         android:layout_marginTop="40px"
         android:background="@drawable/ft1" />
-
+    <Button
+        android:id="@+id/button4"
+        android:layout_width="90px"
+        android:layout_height="90px"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="40px"
+        android:layout_marginTop="40px"
+        android:background="@drawable/ft4" />
     <EditText
         android:id="@+id/editText1"
         android:layout_width="584px"
@@ -23,7 +31,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginLeft="70px"
         android:layout_marginTop="80px"
-        android:layout_toRightOf="@+id/button1"
+        android:layout_toRightOf="@+id/button4"
         android:background="@drawable/ftbar"
         android:paddingLeft="10px"
         android:singleLine="true"
@@ -44,7 +52,7 @@
         android:layout_width="fill_parent"
         android:layout_height="2dp"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/button1"
+        android:layout_below="@+id/editText1"
         android:layout_marginTop="119px"
         android:background="#ffffffff" />
 

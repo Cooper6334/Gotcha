@@ -170,6 +170,17 @@ public class FindActivity extends Activity {
 						// }
 					}
 				});
+
+		// finish
+		((Button) findViewById(R.id.button4))
+				.setOnClickListener(new Button.OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						// TODO Auto-generated method stub
+						finish();
+					}
+				});
 		linear[0] = (LinearLayout) findViewById(R.id.linear1);
 		linear[1] = (LinearLayout) findViewById(R.id.linear2);
 		linear[2] = (LinearLayout) findViewById(R.id.linear3);
