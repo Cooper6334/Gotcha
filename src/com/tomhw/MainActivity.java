@@ -1132,10 +1132,16 @@ public class MainActivity extends InputMethodService implements
 	public void onStartInput(EditorInfo attribute, boolean restarting) {
 		super.onStartInput(attribute, restarting);
 		Log.e("IME", "onStart");
-		if (!testString.equals("")) {
-			getCurrentInputConnection().commitText(testString,
-					testString.length());
-			testString = "";
+		Log.e("main", flagFindTagOpening + " " + testString + " " + restarting);
+		if (!testString.equals("") && !restarting) {
+
+			if (getCurrentInputConnection().commitText(testString,
+					testString.length())) {
+				Log.e("main", "success");
+				testString = "";
+			} else {
+				Log.e("main", "fail");
+			}
 			// mInputMethodManager.showSoftInput( getCurrentInputConnection().,
 			// 0);
 		}
