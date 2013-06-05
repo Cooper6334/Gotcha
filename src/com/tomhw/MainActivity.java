@@ -1133,9 +1133,9 @@ public class MainActivity extends InputMethodService implements
 			// mInputMethodManager.showSoftInput( getCurrentInputConnection().,
 			// 0);
 		}
-//		if (keyBoardView[nowKeyboard] != null) {
-//			setInputView(keyBoardView[nowKeyboard]);
-//		}
+		// if (keyBoardView[nowKeyboard] != null) {
+		// setInputView(keyBoardView[nowKeyboard]);
+		// }
 		Log.e("hand", isInputViewShown() + " " + nowKeyboard);
 
 	}

@@ -27,6 +27,7 @@
         android:background="@drawable/ftbar"
         android:paddingLeft="10px"
         android:singleLine="true"
+        android:hint="輸入相關字詞來聯想(例如紅色,食物......)"
         android:textSize="12sp" >
     </EditText>
 

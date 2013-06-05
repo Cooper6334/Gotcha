@@ -3,16 +3,19 @@
     android:oneshot="false" >
 
     <item
-        android:drawable="@drawable/ftload1"
+        android:drawable="@drawable/ftfind1"
         android:duration="300">
     </item>
     <item
-        android:drawable="@drawable/ftload2"
+        android:drawable="@drawable/ftfind2"
         android:duration="300">
     </item>
     <item
-        android:drawable="@drawable/ftload3"
-        android:duration="500">
+        android:drawable="@drawable/ftfind3"
+        android:duration="300">
     </item>
-
+    <item
+        android:drawable="@drawable/ftfind4"
+        android:duration="600">
+    </item>
 </animation-list>

@@ -24,15 +24,18 @@ import org.json.JSONObject;
 import xBaseJ.DBF;
 import xBaseJ.Field;
 import xBaseJ.xBaseJException;
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.speech.RecognizerIntent;
@@ -41,10 +44,8 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
 public class FindActivity extends Activity {
 	String[] testString = { "西瓜", "鳳梨", "番茄", "荔枝", "香蕉", "芭樂", "水梨" };
@@ -83,7 +84,7 @@ public class FindActivity extends Activity {
 
 					}
 				}
-				progress.dismiss();
+				findingDialog.dismiss();
 
 				break;
 
@@ -97,12 +98,14 @@ public class FindActivity extends Activity {
 	String queryTag;
 	DataSet queryData;
 
-	ProgressDialog progress;
+	Dialog findingDialog;
+	// ProgressDialog progress;
 	EditText editText;
 	LinearLayout[] linear = new LinearLayout[3];
 	LinearLayout tagLinear;
 	private static final int VOICE_RECOGNITION_REQUEST_CODE = 1234;
 
+	@SuppressLint("NewApi")
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -111,8 +114,18 @@ public class FindActivity extends Activity {
 		imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
 		editText = (EditText) findViewById(R.id.editText1);
 		editText.setText("");
-		progress = new ProgressDialog(this);
-		progress.setMessage("搜尋中");
+
+		findingDialog = new Dialog(this);
+		findingDialog.setTitle("尋找關連中");
+		ImageView i = new ImageView(this);
+		i.setBackground(getResources().getDrawable(R.anim.ftfind));
+		findingDialog.setContentView(i);
+		AnimationDrawable animation = new AnimationDrawable();
+		animation = (AnimationDrawable) i.getBackground();
+		animation.start();
+		// progress = new ProgressDialog(this);
+
+		// progress.setMessage("搜尋中");
 
 		// query
 		((Button) findViewById(R.id.button2))
@@ -131,7 +144,7 @@ public class FindActivity extends Activity {
 						imm.hideSoftInputFromWindow(editText.getWindowToken(),
 								0);
 						String s = editText.getText().toString();
-						progress.show();
+						findingDialog.show();
 
 						TagView t;
 						if (tags.size() == 0) {
