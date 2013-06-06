@@ -12,30 +12,32 @@
         android:layout_height="90px"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:layout_marginLeft="40px"
-        android:layout_marginTop="40px"
+        android:layout_marginRight="30px"
+        android:layout_marginTop="30px"
         android:background="@drawable/ft1" />
+
     <Button
         android:id="@+id/button4"
         android:layout_width="90px"
         android:layout_height="90px"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_marginLeft="40px"
-        android:layout_marginTop="40px"
+        android:layout_marginLeft="30px"
+        android:layout_marginTop="30px"
         android:background="@drawable/ft4" />
+
     <EditText
         android:id="@+id/editText1"
         android:layout_width="584px"
         android:layout_height="102px"
         android:layout_alignParentTop="true"
-        android:layout_marginLeft="70px"
+        android:layout_marginLeft="33px"
         android:layout_marginTop="80px"
         android:layout_toRightOf="@+id/button4"
         android:background="@drawable/ftbar"
+        android:hint="輸入相關字詞來聯想(例如紅色,食物......)"
         android:paddingLeft="10px"
         android:singleLine="true"
-        android:hint="輸入相關字詞來聯想(例如紅色,食物......)"
         android:textSize="24sp" >
     </EditText>
 
