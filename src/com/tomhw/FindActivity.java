@@ -17,18 +17,24 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.SearchManager;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.speech.RecognizerIntent;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup.LayoutParams;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
+import android.widget.TextView;
 
 public class FindActivity extends Activity {
 	String[] testString = { "西瓜", "鳳梨", "番茄", "荔枝", "香蕉", "芭樂", "水梨" };
@@ -81,7 +87,7 @@ public class FindActivity extends Activity {
 	String queryTag;
 	DataSet queryData;
 
-	Dialog findingDialog;
+	PopupWindow findingDialog;
 	// ProgressDialog progress;
 	EditText editText;
 	LinearLayout[] linear = new LinearLayout[3];
@@ -98,11 +104,19 @@ public class FindActivity extends Activity {
 		editText = (EditText) findViewById(R.id.editText1);
 		editText.setText("");
 
-		findingDialog = new Dialog(this);
-		findingDialog.setTitle("尋找關連中");
-		ImageView i = new ImageView(this);
-		i.setBackground(getResources().getDrawable(R.anim.ftfind));
-		findingDialog.setContentView(i);
+		findingDialog = new PopupWindow(this);
+
+		LayoutInflater lay = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+		View v = lay.inflate(R.layout.ftloaddialog, null);
+
+		findingDialog.setWidth(300);
+		findingDialog.setHeight(450);
+		findingDialog.setBackgroundDrawable(null);
+		findingDialog.setContentView(v);
+
+		// findingDialog.setTitle("尋找關連中");
+		ImageView i = (ImageView) v.findViewById(R.id.imageView1);
+
 		AnimationDrawable animation = new AnimationDrawable();
 		animation = (AnimationDrawable) i.getBackground();
 		animation.start();
@@ -127,8 +141,10 @@ public class FindActivity extends Activity {
 						imm.hideSoftInputFromWindow(editText.getWindowToken(),
 								0);
 						String s = editText.getText().toString();
-						findingDialog.show();
-
+						findingDialog.showAtLocation(
+								findViewById(R.id.RelativeLayout1),
+								Gravity.CENTER, 0, 0);
+	
 						TagView t;
 						if (tags.size() == 0) {
 							t = new TagView(FindActivity.this, s, true);

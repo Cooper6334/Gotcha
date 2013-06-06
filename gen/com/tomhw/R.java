@@ -227,13 +227,13 @@ public final class R {
         public static final int function8=0x7f0a0030;
         public static final int function9=0x7f0a004d;
         public static final int horizontalScrollView1=0x7f0a0059;
-        public static final int imageView1=0x7f0a0063;
+        public static final int imageView1=0x7f0a005f;
         public static final int linear1=0x7f0a005c;
         public static final int linear2=0x7f0a005d;
         public static final int linear3=0x7f0a005e;
-        public static final int linearLayout1=0x7f0a0061;
-        public static final int linearLayout2=0x7f0a0060;
-        public static final int relative=0x7f0a005f;
+        public static final int linearLayout1=0x7f0a0063;
+        public static final int linearLayout2=0x7f0a0062;
+        public static final int relative=0x7f0a0061;
         public static final int scrollView1=0x7f0a005b;
         public static final int surfaceView1=0x7f0a0031;
         public static final int symbol1=0x7f0a0064;
@@ -264,7 +264,7 @@ public final class R {
         public static final int symbol8=0x7f0a006b;
         public static final int symbol9=0x7f0a006c;
         public static final int taglinear=0x7f0a005a;
-        public static final int textView1=0x7f0a0062;
+        public static final int textView1=0x7f0a0060;
         public static final int view=0x7f0a0058;
     }
     public static final class layout {
@@ -272,11 +272,12 @@ public final class R {
         public static final int drawactivity=0x7f030001;
         public static final int english=0x7f030002;
         public static final int finding=0x7f030003;
-        public static final int handwrite=0x7f030004;
-        public static final int mainactivity=0x7f030005;
-        public static final int showtag=0x7f030006;
-        public static final int symbol1=0x7f030007;
-        public static final int symbol2=0x7f030008;
+        public static final int ftloaddialog=0x7f030004;
+        public static final int handwrite=0x7f030005;
+        public static final int mainactivity=0x7f030006;
+        public static final int showtag=0x7f030007;
+        public static final int symbol1=0x7f030008;
+        public static final int symbol2=0x7f030009;
     }
     public static final class string {
         public static final int app_name=0x7f080000;
