@@ -22,8 +22,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import com.tomhw.ShowTagActivity.getImagesTask;
-
 import xBaseJ.DBF;
 import xBaseJ.Field;
 import xBaseJ.xBaseJException;
@@ -31,8 +29,6 @@ import xBaseJ.xBaseJException;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -40,12 +36,10 @@ import android.graphics.Path;
 import android.graphics.PixelFormat;
 import android.graphics.PorterDuff.Mode;
 import android.inputmethodservice.InputMethodService;
-import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
-import android.text.InputType;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -161,6 +155,7 @@ public class MainActivity extends InputMethodService implements
 	@Override
 	public void onCreate() {
 		super.onCreate();
+		Log.e("IME", "onCreate");
 		mInputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
 
 		// 初始化注音字庫-------------------------------------
@@ -226,7 +221,6 @@ public class MainActivity extends InputMethodService implements
 			e.printStackTrace();
 		}
 
-		Log.e("IME", "onCreate");
 	}
 
 	@Override
@@ -407,7 +401,8 @@ public class MainActivity extends InputMethodService implements
 
 						@Override
 						public boolean onTouch(View v, MotionEvent event) {
-							Log.e("touch", event.getX() + ":" + event.getY());
+							// Log.e("touch", event.getX() + ":" +
+							// event.getY());
 							switch (event.getAction()) {
 							case MotionEvent.ACTION_DOWN:
 								selectKeyboardView.nextKeyboard();
@@ -641,7 +636,8 @@ public class MainActivity extends InputMethodService implements
 
 						@Override
 						public boolean onTouch(View v, MotionEvent event) {
-							Log.e("touch", event.getX() + ":" + event.getY());
+							// Log.e("touch", event.getX() + ":" +
+							// event.getY());
 							switch (event.getAction()) {
 							case MotionEvent.ACTION_DOWN:
 
@@ -794,7 +790,34 @@ public class MainActivity extends InputMethodService implements
 		}
 
 		selectKeyboardView.setKeyboard(initKeyboard);
-		return keyBoardView[initKeyboard];
+
+		try {
+			if (flagFindTagOpening) {
+				// Log.e("main", "setButton on");
+				for (int i = 0; i < 3; i++) {
+					((Button) keyBoardView[i].findViewById(R.id.function6))
+							.setBackgroundResource(R.drawable.f62);
+				}
+				for (int i = 0; i < 2; i++) {
+					((Button) symbolView[i].findViewById(R.id.function6))
+							.setBackgroundResource(R.drawable.f62);
+				}
+			} else {
+				// Log.e("main", "setButton off");
+				for (int i = 0; i < 3; i++) {
+					((Button) keyBoardView[i].findViewById(R.id.function6))
+							.setBackgroundResource(R.drawable.f6);
+				}
+				for (int i = 0; i < 2; i++) {
+					((Button) symbolView[i].findViewById(R.id.function6))
+							.setBackgroundResource(R.drawable.f6);
+				}
+			}
+		} catch (NullPointerException e) {
+			Log.e("main", "null");
+		}
+
+		return keyBoardView[nowKeyboard];
 	}
 
 	// handle typing----------------------------------------------------------
@@ -1132,22 +1155,23 @@ public class MainActivity extends InputMethodService implements
 	public void onStartInput(EditorInfo attribute, boolean restarting) {
 		super.onStartInput(attribute, restarting);
 		Log.e("IME", "onStart");
-		Log.e("main", flagFindTagOpening + " " + testString + " " + restarting);
+		// Log.e("main", flagFindTagOpening + " " + testString + " " +
+		// restarting);
 		if (!testString.equals("") && !restarting) {
 
 			if (getCurrentInputConnection().commitText(testString,
 					testString.length())) {
-				Log.e("main", "success");
+				// Log.e("main", "success");
 				testString = "";
 			} else {
-				Log.e("main", "fail");
+				// Log.e("main", "fail");
 			}
 			// mInputMethodManager.showSoftInput( getCurrentInputConnection().,
 			// 0);
 		}
 		try {
 			if (flagFindTagOpening) {
-				Log.e("main", "setButton on");
+				// Log.e("main", "setButton on");
 				for (int i = 0; i < 3; i++) {
 					((Button) keyBoardView[i].findViewById(R.id.function6))
 							.setBackgroundResource(R.drawable.f62);
@@ -1157,7 +1181,7 @@ public class MainActivity extends InputMethodService implements
 							.setBackgroundResource(R.drawable.f62);
 				}
 			} else {
-				Log.e("main", "setButton off");
+				// Log.e("main", "setButton off");
 				for (int i = 0; i < 3; i++) {
 					((Button) keyBoardView[i].findViewById(R.id.function6))
 							.setBackgroundResource(R.drawable.f6);
@@ -1173,7 +1197,7 @@ public class MainActivity extends InputMethodService implements
 		// if (keyBoardView[nowKeyboard] != null) {
 		// setInputView(keyBoardView[nowKeyboard]);
 		// }
-		Log.e("hand", isInputViewShown() + " " + nowKeyboard);
+		// Log.e("hand", isInputViewShown() + " " + nowKeyboard);
 
 	}
 

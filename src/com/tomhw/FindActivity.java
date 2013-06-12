@@ -9,7 +9,6 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,10 +23,8 @@ import org.json.JSONObject;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 
-import android.app.Dialog;
 import android.app.SearchManager;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -37,14 +34,12 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup.LayoutParams;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
-import android.widget.TextView;
 
 public class FindActivity extends Activity {
 	// String[] testString = { "西瓜", "鳳梨", "番茄", "荔枝", "香蕉", "芭樂", "水梨" };
@@ -73,7 +68,7 @@ public class FindActivity extends Activity {
 					linear[i % 3].addView(new FindTagView(FindActivity.this,
 							showingEdges.get(i).name));
 				}
-				if (flag) {
+				if (flag || i < 24) {
 
 					linear[i % 3].addView(new FindTagView(FindActivity.this));
 
@@ -292,7 +287,7 @@ public class FindActivity extends Activity {
 							}
 							tag = encoder.StoT(s2);
 							queryTag = tag;
-							Log.e("nlp", "query " + s2);
+							// Log.e("nlp", "query " + s2);
 							TagView t2;
 							if (tags.size() == 0) {
 								t2 = new TagView(FindActivity.this, queryTag,
@@ -386,7 +381,7 @@ public class FindActivity extends Activity {
 
 		if (r.length() == 3 && r.substring(0, 1).equals(r.substring(1, 2))
 				&& r.substring(2, 3).equals("的")) {
-			Log.e("filter", "xx的");
+			// Log.e("filter", "xx的");
 			return r.substring(0, 1);
 		}
 		for (int i = 0; i < filterWords.length; i++) {
