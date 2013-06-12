@@ -243,7 +243,7 @@ public class MainActivity extends InputMethodService implements
 		// }
 
 		chineseCandidateView = new ChineseCandidateView(this);
-		chineseCandidateView.setLayoutParams(new LayoutParams(1080,135));
+		chineseCandidateView.setLayoutParams(new LayoutParams(1080, 135));
 		chineseCandidateView.setService(this);
 
 		return chineseCandidateView;
@@ -1147,6 +1147,7 @@ public class MainActivity extends InputMethodService implements
 		}
 		try {
 			if (flagFindTagOpening) {
+				Log.e("main", "setButton on");
 				for (int i = 0; i < 3; i++) {
 					((Button) keyBoardView[i].findViewById(R.id.function6))
 							.setBackgroundResource(R.drawable.f62);
@@ -1156,6 +1157,7 @@ public class MainActivity extends InputMethodService implements
 							.setBackgroundResource(R.drawable.f62);
 				}
 			} else {
+				Log.e("main", "setButton off");
 				for (int i = 0; i < 3; i++) {
 					((Button) keyBoardView[i].findViewById(R.id.function6))
 							.setBackgroundResource(R.drawable.f6);
@@ -1166,7 +1168,7 @@ public class MainActivity extends InputMethodService implements
 				}
 			}
 		} catch (NullPointerException e) {
-
+			Log.e("main", "null");
 		}
 		// if (keyBoardView[nowKeyboard] != null) {
 		// setInputView(keyBoardView[nowKeyboard]);

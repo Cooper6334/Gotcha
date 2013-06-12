@@ -52,78 +52,81 @@ import org.apache.lucene.analysis.cn.smart.WordTokenizer;
  */
 public class SmartChineseAnalyzer extends Analyzer {
 
-  private Set<String> stopWords = null;
+	private Set<String> stopWords = null;
 
-  private WordSegmenter wordSegment;
+	private WordSegmenter wordSegment;
 
-  public SmartChineseAnalyzer() {
-    this(false);
-  }
+	public SmartChineseAnalyzer() {
+		this(false);
+	}
 
-  /**
-   * SmartChineseAnalyzer内部带有默认停止词库，主要是标点符号。如果不希望结果中出现标点符号，
-   * 可以将useDefaultStopWords设为true， useDefaultStopWords为false时不使用任何停止词
-   * 
-   * @param useDefaultStopWords
-   */
-  public SmartChineseAnalyzer(boolean useDefaultStopWords) {
-    if (useDefaultStopWords) {
-      stopWords = loadStopWords(this.getClass().getResourceAsStream(
-          "stopwords.txt"));
-    }
-    wordSegment = new WordSegmenter();
-  }
+	/**
+	 * SmartChineseAnalyzer内部带有默认停止词库，主要是标点符号。如果不希望结果中出现标点符号，
+	 * 可以将useDefaultStopWords设为true， useDefaultStopWords为false时不使用任何停止词
+	 * 
+	 * @param useDefaultStopWords
+	 */
+	public SmartChineseAnalyzer(boolean useDefaultStopWords) {
+		if (useDefaultStopWords) {
+			stopWords = loadStopWords(this.getClass().getResourceAsStream(
+					"stopwords.txt"));
+		}
+		wordSegment = new WordSegmenter();
+	}
 
-  /**
-   * 使用自定义的而不使用内置的停止词库，停止词可以使用SmartChineseAnalyzer.loadStopWords(InputStream)加载
-   * 
-   * @param stopWords
-   * @see SmartChineseAnalyzer.loadStopWords(InputStream)
-   */
-  public SmartChineseAnalyzer(Set<String> stopWords) {
-    this.stopWords = stopWords;
-    wordSegment = new WordSegmenter();
-  }
+	/**
+	 * 使用自定义的而不使用内置的停止词库，停止词可以使用SmartChineseAnalyzer.loadStopWords(InputStream)
+	 * 加载
+	 * 
+	 * @param stopWords
+	 * @see SmartChineseAnalyzer.loadStopWords(InputStream)
+	 */
+	public SmartChineseAnalyzer(Set<String> stopWords) {
+		this.stopWords = stopWords;
+		wordSegment = new WordSegmenter();
+	}
 
-  public TokenStream tokenStream(String fieldName, Reader reader) {
-    TokenStream result = new SentenceTokenizer(reader);
-    result = new WordTokenizer(result, wordSegment);
-    // result = new LowerCaseFilter(result);
-    // 不再需要LowerCaseFilter，因为SegTokenFilter已经将所有英文字符转换成小写
-    // stem太严格了, This is not bug, this feature:)
-    result = new PorterStemFilter(result);
-    if (stopWords != null) {
-      result = new StopFilter(result, stopWords, false);
-    }
-    return result;
-  }
+	public TokenStream tokenStream(String fieldName, Reader reader) {
+		TokenStream result = new SentenceTokenizer(reader);
+		result = new WordTokenizer(result, wordSegment);
+		// result = new LowerCaseFilter(result);
+		// 不再需要LowerCaseFilter，因为SegTokenFilter已经将所有英文字符转换成小写
+		// stem太严格了, This is not bug, this feature:)
+		result = new PorterStemFilter(result);
+		if (stopWords != null) {
+			result = new StopFilter(result, stopWords, false);
+		}
+		return result;
+	}
 
-  /**
-   * 从停用词文件中加载停用词， 停用词文件是普通UTF-8编码的文本文件， 每一行是一个停用词，注释利用“//”， 停用词中包括中文标点符号， 中文空格，
-   * 以及使用率太高而对索引意义不大的词。
-   * 
-   * @param input 停用词文件
-   * @return 停用词组成的HashSet
-   */
-  public static Set<String> loadStopWords(InputStream input) {
-    String line;
-    Set<String> stopWords = new HashSet<String>();
-    try {
-      BufferedReader br = new BufferedReader(new InputStreamReader(input,
-          "UTF-8"));
-      while ((line = br.readLine()) != null) {
-        if (line.indexOf("//") != -1) {
-          line = line.substring(0, line.indexOf("//"));
-        }
-        line = line.trim();
-        if (line.length() != 0)
-          stopWords.add(line.toLowerCase());
-      }
-      br.close();
-    } catch (IOException e) {
-      System.err.println("WARNING: cannot open stop words list!");
-    }
-    return stopWords;
-  }
+	/**
+	 * 从停用词文件中加载停用词， 停用词文件是普通UTF-8编码的文本文件， 每一行是一个停用词，注释利用“//”， 停用词中包括中文标点符号，
+	 * 中文空格， 以及使用率太高而对索引意义不大的词。
+	 * 
+	 * @param input
+	 *            停用词文件
+	 * @return 停用词组成的HashSet
+	 */
+	public static Set<String> loadStopWords(InputStream input) {
+		String line;
+		Set<String> stopWords = new HashSet<String>();
+		try {
+			BufferedReader br = new BufferedReader(new InputStreamReader(input,
+					"UTF-8"));
+			while ((line = br.readLine()) != null) {
+				if (line.indexOf("//") != -1) {
+					line = line.substring(0, line.indexOf("//"));
+				}
+				line = line.trim();
+				if (line.length() != 0)
+					stopWords.add(line.toLowerCase());
+			}
+			br.close();
+		} catch (IOException e) {
+			System.err.println("WARNING: cannot open stop words list!");
+		}
+
+		return stopWords;
+	}
 
 }
